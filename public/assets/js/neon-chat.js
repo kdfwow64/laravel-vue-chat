@@ -93,6 +93,7 @@ var neonChat = neonChat || {
             $chat.find("form#chat-file").submit(function (e) {
 
                 e.preventDefault();
+                
                 var formData = new FormData(this);
                 if (neonChat.isOpen && neonChat.$current_user) {
                     var id = neonChat.$current_user.uniqueId().attr('id');

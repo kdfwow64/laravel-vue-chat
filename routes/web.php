@@ -65,6 +65,7 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
     Route::group(['prefix' => 'messages'], function () {
         Route::post('/', 'MessagesController@sendTest')->middleware('permission:messages.send');
         Route::post('send', 'MessagesController@send')->middleware('permission:messages.send');
+        Route::post('send1', 'MessagesController@send1')->middleware('permission:messages.send');
         Route::post('send-group', 'MessagesController@sendGroups')->middleware('permission:messages.send');
         Route::post('chat', 'MessagesController@chat')->middleware('permission:messages.send');
         Route::post('last-messages', 'MessagesController@lastMessages')->middleware('permission:messages.send');

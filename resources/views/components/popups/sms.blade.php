@@ -6,7 +6,7 @@
                 <h4 class="modal-title">Send Messages</h4>
             </div>
             <div class="modal-body">
-                <form class="validate ajax-form" action="{{url("messages/send")}}" data-callback="clearFields" method="post" enctype="multipart/form-data">
+                <form class="validate ajax-form" action="{{url("messages/send1")}}" data-callback="clearFields" method="post" enctype="multipart/form-data">
                     <div class="alert alert-success" style="display: none">
                     </div>
                     {{csrf_field()}}
@@ -37,7 +37,7 @@
                                 <div class="date-and-time">
                                     <input id="start_at" name="start_at_date" class="form-control datepicker"
                                            data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}">
-                                    <input id="start_at" name="start_at_time" class="form-control timepicker"
+                                    <input id="start_at_time" name="start_at_time" class="form-control timepicker"
                                            data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
                                            data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>

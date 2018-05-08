@@ -6,7 +6,7 @@
                 <h4 class="modal-title">Send Messages</h4>
             </div>
             <div class="modal-body">
-                <form class="validate ajax-form" action="{{url("messages/send1")}}" data-callback="clearFields" method="post" enctype="multipart/form-data">
+                <form class="validate ajax-form" action="{{url("messages/send")}}" data-callback="clearFields" method="post" enctype="multipart/form-data">
                     <div class="alert alert-success" style="display: none">
                     </div>
                     {{csrf_field()}}
@@ -38,7 +38,7 @@
                                     <input id="start_at" name="start_at_date" class="form-control datepicker"
                                            data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}">
                                     <input id="start_at_time" name="start_at_time" class="form-control timepicker"
-                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
+                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="true"
                                            data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>
                                 <div class="row">
@@ -53,6 +53,7 @@
                         </div>
                     </div>
                     <div class="row schedule" style="display: none;color: black;">
+
                         <div class="row" style="margin-bottom: 5px;">
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
@@ -553,6 +554,15 @@
                     sms_single.find('.repeat_after').css('display','none');
                     sms_single.find('#repeat_on_date').css('display','unset');
                 }
+            }).on('click','input[type=button]',function() {
+             /*   $.ajax({
+                    url: "{{url("messages/send1")}}",
+                    type: 'POST',
+                    success: function(data) {
+                        alert(data);
+                    }
+
+                });*/
             });
 
 

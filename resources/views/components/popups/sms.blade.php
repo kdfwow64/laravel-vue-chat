@@ -38,7 +38,7 @@
                                     <input id="start_at" name="start_at_date" class="form-control datepicker"
                                            data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}">
                                     <input id="start_at_time" name="start_at_time" class="form-control timepicker"
-                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="true"
+                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
                                            data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>
                                 <div class="row">
@@ -63,7 +63,7 @@
                                     <option>After</option>
                                     <option>On Date</option>
                                 </select>
-                                <span class="repeat_after" style="display: none;"><input value="r1" type="number" style="width: 40px;height: 18px;" name="end_repeat_time" id="end_repeat_time">time(s)</span>
+                                <span class="repeat_after" style="display: none;"><input value="1" type="number" style="width: 40px;height: 18px;" name="end_repeat_time" id="end_repeat_time">time(s)</span>
                                 <input id="repeat_on_date"  style="display: none;width: 33%;height: 18px;" name="repeat_on_date" class="form-control datepicker"
                                            data-format="yyyy-mm-dd" data-min-date="{{Carbon\Carbon::now()->toDateString()}}" value="{{Carbon\Carbon::now()->toDateString()}}">
                             </div>
@@ -223,11 +223,11 @@
                                     <div class="row">
                                         Start time:
                                         <input id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
-                                               data-template="dropdown" data-show-meridian="true" value="09:00"/>
+                                               data-template="dropdown" data-show-meridian="false" value="09:00"/>
                                     </div>
                                     <div class="row">
                                         End time:
-                                        <input id="schedule_end_at_time" style="margin-bottom: 10px;" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
+                                        <input id="schedule_end_at_time" style="margin-bottom: 10px;" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="false"/>
                                     </div>
                                 </div>
                             </div>
@@ -555,14 +555,109 @@
                     sms_single.find('#repeat_on_date').css('display','unset');
                 }
             }).on('click','input[type=button]',function() {
-             /*   $.ajax({
-                    url: "{{url("messages/send1")}}",
-                    type: 'POST',
-                    success: function(data) {
-                        alert(data);
+                let repeat_times = 0;
+                let repeat_on_date = "";
+                let schedule_start_at_time = sms_single.find('#schedule_start_at_time').val();
+                let schedule_end_at_time = sms_single.find('#schedule_end_at_time').val();
+                let every = 1;
+                let frequency_type = sms_single.find('input[name=frequency_type]:checked').val();
+                let weekly_period = "";
+                let monthly_flag = 0;
+                let monthly_period = "";
+                let monthly_turn = "";
+                let monthly_day = "";
+
+                let yearly_flag = 0;
+                let yearly_period = "";
+                let yearly_turn = "";
+                let yearly_day = "";
+                if(sms_single.find('#schedule_repeat').val() == 'After')
+                    repeat_times = sms_single.find('#end_repeat_time').val();
+                else if(sms_single.find('#schedule_repeat').val() == 'On Date') {
+                    repeat_times = -1;
+                    repeat_on_date = sms_single.find('#repeat_on_date').val();
+                }
+                
+                if(frequency_type == 'daily') {
+                    every = sms_single.find('input[name=daily_period]').val();
+                } else if(frequency_type == 'weekly') {
+                    every = sms_single.find('input[name=weekly_period]').val();
+                    let i = 0;
+                    $('.weekly_table td').each(function(index){
+                        if($(this).hasClass('selected_td')) {
+                            i++;
+                            if(i > 1)
+                                weekly_period +=',';
+                            weekly_period += (index+1);
+                        }
+                    });
+
+                } else if(frequency_type == 'monthly') {
+                    every = sms_single.find('input[name=monthly_period]').val();
+                    if(sms_single.find('input[name=monthly_on]:checked').val() == 'on')
+                        monthly_flag = 1;
+                    if(monthly_flag == 0) {
+                        let i = 0;
+                        $('.monthly_table td').each(function(index){
+                            if($(this).hasClass('selected_td')) {
+                            i++;
+                            if(i > 1)
+                                monthly_period +=',';
+                            monthly_period += (index+1);
+                            }
+                        });
+                    } else {
+                        monthly_turn = sms_single.find('#monthly_turn').val();
+                        monthly_day = sms_single.find('#monthly_day').val();
                     }
 
-                });*/
+                } else if(frequency_type == 'yearly') {
+                    every = sms_single.find('input[name=yearly_period]').val();
+
+                    if(sms_single.find('input[name=yearly_on]').prop('checked') == true)
+                        yearly_flag = 1;
+                    
+                    let i = 0;
+                    $('.yearly_table td').each(function(index){
+                        if($(this).hasClass('selected_td')) {
+                            i++;
+                            if(i > 1)
+                                yearly_period +=',';
+                            yearly_period += (index+1);
+                        }
+                    });
+                    if(yearly_flag == 1){
+                        yearly_turn = sms_single.find('#yearly_turn').val();
+                        yearly_day = sms_single.find('#yearly_day').val();
+                    }
+                }
+
+                $.ajax({
+                    url: "{{url("messages/send1")}}",
+                    type: 'POST',
+                    data:{
+                        repeat_times:repeat_times,
+                        repeat_on_date:repeat_on_date,
+                        schedule_start_at_time:schedule_start_at_time,
+                        schedule_end_at_time:schedule_end_at_time,
+                        every:every,
+                        frequency_type:frequency_type,
+                        dow:weekly_period,
+                        monthly_flag:monthly_flag,
+                        dom:monthly_period,
+                        monthly_turn:monthly_turn,
+                        monthly_day:monthly_day,
+                        yearly_flag:yearly_flag,
+                        doy:yearly_period,
+                        yearly_turn:yearly_turn,
+                        yearly_day:yearly_day
+                    },
+                    success: function(data) {
+
+                        console.log(data);
+                    }
+
+                });
             });
 
 

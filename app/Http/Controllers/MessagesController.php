@@ -8,6 +8,7 @@ use App\Models\Conversation;
 use App\Models\Did;
 use App\Models\Group;
 use App\Models\Message;
+use App\Models\ScheduleMessages;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -87,10 +88,28 @@ class MessagesController extends Controller
 
         return response(['message' => 'Logs successfully deleted']);
     }
-    public function send1(Request $request)
+    public function send1()
     {
-        return 1;
+        $newSchedule = new ScheduleMessages();
+        $newSchedule->schedule_id = 1;
+        $newSchedule->repeat = $_POST['repeat_times'];
+        $newSchedule->frequency = $_POST['frequency_type'];
+        $newSchedule->start_date = '2018-06-07';
+        $newSchedule->end_date = '2018-06-07';
+        $newSchedule->start_time = $_POST['schedule_start_at_time'];
+        $newSchedule->end_time = $_POST['schedule_end_at_time'];
+        $newSchedule->repeat_end = $_POST['repeat_on_date'];
+        $newSchedule->every = $_POST['every'];
+        $newSchedule->dow = $_POST['dow'];
+        $newSchedule->dom = $_POST['dom'];
+        $newSchedule->month_weekend_turn = $_POST['monthly_turn'];
+        $newSchedule->month_weekend_day = $_POST['monthly_day'];
+        $newSchedule->doy = $_POST['doy'];
+        $newSchedule->year_weekend_turn = $_POST['yearly_turn'];
+        $newSchedule->year_weekend_day = $_POST['yearly_day'];
+        $newSchedule->save();
 
+        return 1;
     }
 
 

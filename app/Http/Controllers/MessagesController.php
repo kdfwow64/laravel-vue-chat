@@ -89,8 +89,7 @@ class MessagesController extends Controller
         return response(['message' => 'Logs successfully deleted']);
     }
     public function send1()
-    {
-    /*    
+    {   
         $newSchedule = new ScheduleMessages();
         $newSchedule->schedule_id = 1;
         $newSchedule->repeat = $_POST['repeat_times'];
@@ -114,19 +113,12 @@ class MessagesController extends Controller
         $newSchedule->year_weekend_day = $_POST['yearly_day'];
         $newSchedule->flag = 0;
         $newSchedule->flagE = 1;
-        $newSchedule->save();*/
-        $startTime = new Carbon('10:00:00');
-        $endTime = new Carbon('10:10:00');
-        $currentTime = new Carbon;
-        $is = 0;
-        if( ($startTime->diff(new Carbon)->format('%R') == '+') && ($currentTime->diff($endTime)->format('%R') == '+') ) {
-                $is = 1;
-        }
+        $newSchedule->save();
 /*
         
         $datetime1 = new Carbon;
         $datetime1 = $datetime1->addDays(1);*/
-        return ($currentTime->diff($endTime)->format('%R')).($startTime->diff(new Carbon)->format('%R')).$is;
+        return 1;
     }
 
 

@@ -106,7 +106,43 @@ class SendScheduleMessages extends Command
                         }
                     }
                 } else if($message->frequency == 'weekly') {
+                    if($message->repeat == -1) { //on Date
+                        $endDate = new Carbon($message->repeat_end);
+                        if( $endDate->diff(new Carbon)->format('%R') == '+' ) {
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        } else {
+                            if($message->every_t == 0) {
+                                $flag = 1;
+                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                            }
+                            $message->every_t++;
+                            $message->every_t = $message->every_t % $message->every;
+                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                        }
+                    } else if($message->repeat == -2) { //Never end repeat
 
+                        if($message->every_t == 0) {
+                            $flag = 1;
+                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                        }
+                        $message->every_t++;
+                        $message->every_t = $message->every_t % $message->every;
+                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                    } else { //repeat times
+                        if($message->repeat == 0)
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        else {
+                            if($message->every_t == 0) {
+                                $flag = 1;
+                                $message->repeat --;
+                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                            }
+                            $message->every_t++;
+                            $message->every_t = $message->every_t % $message->every;
+                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                        }
+                    }
                 } else if($message->frequency == 'monthly') {
 
                 } else {

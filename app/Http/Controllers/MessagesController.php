@@ -102,7 +102,7 @@ class MessagesController extends Controller
         $newSchedule->start_time = $_POST['schedule_start_at_time'];
         $newSchedule->end_time = $_POST['schedule_end_at_time'];
         $newSchedule->repeat_end = $_POST['repeat_on_date'];
-        $newSchedule->every = 3;
+        $newSchedule->every = $_POST['every'];
         $newSchedule->every_t = 0;
         $newSchedule->dow = $_POST['dow'];
         $newSchedule->dom = $_POST['dom'];

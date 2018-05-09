@@ -90,16 +90,21 @@ class MessagesController extends Controller
     }
     public function send1()
     {
+    /*    
         $newSchedule = new ScheduleMessages();
         $newSchedule->schedule_id = 1;
         $newSchedule->repeat = $_POST['repeat_times'];
         $newSchedule->frequency = $_POST['frequency_type'];
         $newSchedule->start_date = '2018-06-07';
         $newSchedule->end_date = '2018-06-07';
+        $currentDate = new Carbon;
+        $currentDate = $currentDate->addDays(1);
+        $newSchedule->last_date = $currentDate->toDateString();
         $newSchedule->start_time = $_POST['schedule_start_at_time'];
         $newSchedule->end_time = $_POST['schedule_end_at_time'];
         $newSchedule->repeat_end = $_POST['repeat_on_date'];
-        $newSchedule->every = $_POST['every'];
+        $newSchedule->every = 3;
+        $newSchedule->every_t = 0;
         $newSchedule->dow = $_POST['dow'];
         $newSchedule->dom = $_POST['dom'];
         $newSchedule->month_weekend_turn = $_POST['monthly_turn'];
@@ -107,14 +112,27 @@ class MessagesController extends Controller
         $newSchedule->doy = $_POST['doy'];
         $newSchedule->year_weekend_turn = $_POST['yearly_turn'];
         $newSchedule->year_weekend_day = $_POST['yearly_day'];
-        $newSchedule->save();
-
-        return 1;
+        $newSchedule->flag = 0;
+        $newSchedule->flagE = 1;
+        $newSchedule->save();*/
+        $startTime = new Carbon('10:00:00');
+        $endTime = new Carbon('10:10:00');
+        $currentTime = new Carbon;
+        $is = 0;
+        if( ($startTime->diff(new Carbon)->format('%R') == '+') && ($currentTime->diff($endTime)->format('%R') == '+') ) {
+                $is = 1;
+        }
+/*
+        
+        $datetime1 = new Carbon;
+        $datetime1 = $datetime1->addDays(1);*/
+        return ($currentTime->diff($endTime)->format('%R')).($startTime->diff(new Carbon)->format('%R')).$is;
     }
 
 
     public function send(Request $request)
     {
+
         $request->merge([
             'receivers' => collect(explode(',', $request->input('receivers', "")))->reject(function ($v, $k) {
                 if ($v == "") {
@@ -171,43 +189,66 @@ class MessagesController extends Controller
             return response(['message' => 'You don\' have did'], 500);
         }
 
-        foreach ($request->input('receivers') as $receiver) {
+        if($request->input('is_schedule_hidden',"") == '2') {
 
-            $uContact = Auth::user()->account->searchContact($receiver);
+            foreach ($request->input('receivers') as $receiver) {
 
-            /**
-             * @var $message Message
-             */
-            $message = Auth::user()->messages()->create(array_merge($mms, [
-                'sender'    => $sender->did,
-                'receiver'  => $receiver,
-                'text'      => __($request->input('text'), [
-                    'first_name' => $uContact->first_name,
-                    'last_name'  => $uContact->last_name,
-                ]),
-                'direction' => 'outbound',
-                'folder'    => 'chat',
-                'status'    => 'pending',
-            ]));
-            dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
-            $messages[] = $message;
-        }
+                $uContact = Auth::user()->account->searchContact($receiver);
 
-        if (count($messages) == 1) {
-            $text = e($messages[0]->text);
-            if ($messages[0]->mms != '') {
-                $text = '<img src="' . $messages[0]->mms . '" width="300"/>' . '<br>' . $messages[0]->text;
+                /**
+                 * @var $message Message
+                 */
+                ScheduleMessages::where('flag',0)->update(array(
+                    'sender'    => $sender->did,
+                    'receiver'  => $receiver,
+                    'flag'      => 1,
+                    'text'      => __($request->input('text'), [
+                        'first_name' => $uContact->first_name,
+                        'last_name'  => $uContact->last_name,
+                    ]),
+                ));
             }
 
-            return response()->json([
-                'message' => 'Messages Successfully Send',
-                'id'      => $messages[0]->id,
-                'sender'  => Auth::user()->did_sender->did,
-                'text'    => $text,
-            ]);
-        }
+            return response()->json(['message' => 'Messages Successfully Scheduled']);
+        } else {
+            foreach ($request->input('receivers') as $receiver) {
 
-        return response()->json(['message' => 'Messages Successfully Send']);
+                $uContact = Auth::user()->account->searchContact($receiver);
+
+                /**
+                 * @var $message Message
+                 */
+                $message = Auth::user()->messages()->create(array_merge($mms, [
+                    'sender'    => $sender->did,
+                    'receiver'  => $receiver,
+                    'text'      => __($request->input('text'), [
+                        'first_name' => $uContact->first_name,
+                        'last_name'  => $uContact->last_name,
+                    ]),
+                    'direction' => 'outbound',
+                    'folder'    => 'chat',
+                    'status'    => 'pending',
+                ]));
+                dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
+                $messages[] = $message;
+            }
+
+            if (count($messages) == 1) {
+                $text = e($messages[0]->text);
+                if ($messages[0]->mms != '') {
+                    $text = '<img src="' . $messages[0]->mms . '" width="300"/>' . '<br>' . $messages[0]->text;
+                }
+
+                return response()->json([
+                    'message' => 'Messages Successfully Send',
+                    'id'      => $messages[0]->id,
+                    'sender'  => Auth::user()->did_sender->did,
+                    'text'    => $text,
+                ]);
+            }
+
+            return response()->json(['message' => 'Messages Successfully Send']);
+        }
     }
 
 

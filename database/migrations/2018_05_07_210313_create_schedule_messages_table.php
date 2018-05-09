@@ -15,8 +15,10 @@ class CreateScheduleMessagesTable extends Migration
     {
         Schema::create('schedule_messages', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('account_id');
             $table->integer('schedule_id');
-            $table->unsignedInteger('message_id');
+            $table->string('sender')->index();
+            $table->string('receiver')->index();
             $table->integer('repeat');
             $table->string('frequency');
             $table->date('start_date');
@@ -24,7 +26,9 @@ class CreateScheduleMessagesTable extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->date('repeat_end');
+            $table->date('last_date');
             $table->integer('every');
+            $table->integer('every_t');
             $table->string('dow');
             $table->string('dom');
             $table->string('month_weekend_turn');
@@ -32,6 +36,11 @@ class CreateScheduleMessagesTable extends Migration
             $table->string('doy');
             $table->string('year_weekend_turn');
             $table->string('year_weekend_day');
+            $table->string('text');
+            $table->integer('flag');
+            $table->integer('flagE');
+
+        //    $table->foreign('account_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

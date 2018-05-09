@@ -44,6 +44,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <input type="radio" name="is_schedule" value="once" checked> Once
+                                        <input type="hidden" name="is_schedule_hidden" value="1">
                                     </div>
                                     <div class="col-md-6">
                                         <input type="radio" name="is_schedule" value="schedule"> Schedule
@@ -457,11 +458,13 @@
                     sms_single.find(".schedule").css('display','unset');
                     sms_single.find(".daily").css('display','none');
                     sms_single.find(".daily").css('display','unset');
+                    sms_single.find("input[name=is_schedule_hidden]").val('2');
 
                 } else {
                     sms_single.find("#start_at").prop('disabled',false);
                     sms_single.find("#start_at_time").prop('disabled',false);
                     sms_single.find(".schedule").css('display','none');
+                    sms_single.find("input[name=is_schedule_hidden]").val('1');
                 }
             }).on("click",'input[name=frequency_type]',function() {
                 let str = '.'+$(this).val();
@@ -555,7 +558,7 @@
                     sms_single.find('#repeat_on_date').css('display','unset');
                 }
             }).on('click','input[type=button]',function() {
-                let repeat_times = 0;
+                let repeat_times = -2;
                 let repeat_on_date = "";
                 let schedule_start_at_time = sms_single.find('#schedule_start_at_time').val();
                 let schedule_end_at_time = sms_single.find('#schedule_end_at_time').val();

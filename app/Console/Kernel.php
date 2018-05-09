@@ -6,6 +6,7 @@ use App\Console\Commands\CreateApiDatabase;
 use App\Console\Commands\LocalizationGenerator;
 use App\Console\Commands\SendBirthDayMessages;
 use Illuminate\Console\Scheduling\Schedule;
+use App\Models\ScheduleMessages;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -21,7 +22,7 @@ class Kernel extends ConsoleKernel
 //        CreateApiDatabase::class,
 //        SendBirthDayMessages::class,
         '\App\Console\Commands\SendBirthDayMessages',
-        '\App\Console\Commands\ScheduleMessages',
+        '\App\Console\Commands\SendScheduleMessages',
     ];
 
 
@@ -35,10 +36,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 //        $schedule->command(SendBirthDayMessages::class)->daily();
-        $schedule->command('SendBirthDayMessages:birthday')
-                 ->everyMinute();
-        $schedule->command('ScheduleMessages:run')
-                 ->everyMinute();
+    //    $schedule->command('SendBirthDayMessages:birthday')
+    //             ->everyMinute();
+        $schedule->command('SendScheduleMessages:run')->everyMinute();
     }
 
 

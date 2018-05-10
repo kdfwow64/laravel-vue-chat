@@ -89,21 +89,25 @@ class MessagesController extends Controller
         return response(['message' => 'Logs successfully deleted']);
     }
     public function send1()
-    {   
+    {
         $newSchedule = new ScheduleMessages();
         $newSchedule->schedule_id = 1;
         $newSchedule->repeat = $_POST['repeat_times'];
         $newSchedule->frequency = $_POST['frequency_type'];
         $newSchedule->start_date = '2018-06-07';
-        $newSchedule->end_date = '2018-06-07';
         $currentDate = new Carbon;
-        $currentDate = $currentDate->addDays(1);
         $newSchedule->last_date = $currentDate->toDateString();
+        $currentDate = $currentDate->addDays(1);
+        $newSchedule->end_date = $currentDate->toDateString();
         $newSchedule->start_time = $_POST['schedule_start_at_time'];
         $newSchedule->end_time = $_POST['schedule_end_at_time'];
         $newSchedule->repeat_end = $_POST['repeat_on_date'];
         $newSchedule->every = $_POST['every'];
-        $newSchedule->every_t = 0;
+        $newSchedule->every_t = $_POST['every_t'];
+        if($_POST['frequency_type'] == 'monthly')
+            $newSchedule->every_t = (new Carbon)->month;
+        if($_POST['frequency_type'] == 'yearly')
+            $newSchedule->every_t = (new Carbon)->year;
         $newSchedule->dow = $_POST['dow'];
         $newSchedule->dom = $_POST['dom'];
         $newSchedule->month_weekend_turn = $_POST['monthly_turn'];
@@ -114,10 +118,6 @@ class MessagesController extends Controller
         $newSchedule->flag = 0;
         $newSchedule->flagE = 1;
         $newSchedule->save();
-/*
-        
-        $datetime1 = new Carbon;
-        $datetime1 = $datetime1->addDays(1);*/
         return 1;
     }
 

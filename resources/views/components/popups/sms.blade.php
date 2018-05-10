@@ -111,7 +111,7 @@
                                     <div class="row monthly" style="display: none;">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                Every <input style="width: 20%;height: 20px;" type="number" value="1"  name="montly_period"> month(s)
+                                                Every <input style="width: 20%;height: 20px;" type="number" value="1"  name="monthly_period"> month(s)
                                             </div>
                                         </div>
                                         <div class="row">
@@ -574,6 +574,7 @@
                 let yearly_period = "";
                 let yearly_turn = "";
                 let yearly_day = "";
+                let every_t = 0;
                 if(sms_single.find('#schedule_repeat').val() == 'After')
                     repeat_times = sms_single.find('#end_repeat_time').val();
                 else if(sms_single.find('#schedule_repeat').val() == 'On Date') {
@@ -591,7 +592,8 @@
                             i++;
                             if(i > 1)
                                 weekly_period +=',';
-                            weekly_period += (index+1);
+                            weekly_period += index;
+                            every_t++;
                         }
                     });
 
@@ -607,6 +609,7 @@
                             if(i > 1)
                                 monthly_period +=',';
                             monthly_period += (index+1);
+                            every_t++;
                             }
                         });
                     } else {
@@ -627,6 +630,7 @@
                             if(i > 1)
                                 yearly_period +=',';
                             yearly_period += (index+1);
+                            every_t++;
                         }
                     });
                     if(yearly_flag == 1){
@@ -644,6 +648,7 @@
                         schedule_start_at_time:schedule_start_at_time,
                         schedule_end_at_time:schedule_end_at_time,
                         every:every,
+                        every_t:every_t,
                         frequency_type:frequency_type,
                         dow:weekly_period,
                         monthly_flag:monthly_flag,

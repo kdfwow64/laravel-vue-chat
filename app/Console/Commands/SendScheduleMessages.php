@@ -53,15 +53,20 @@ class SendScheduleMessages extends Command
             /**
              * @var $did Did
              */
+
             $is = 0; // time correct and another day
             $startTime = new Carbon($message->start_time);
             $endTime = new Carbon($message->end_time);
             $currentTime = new Carbon;
-            $lastDate = new Carbon($message->last_date);
+            $lastDate = new Carbon($message->end_date);
             if( ($startTime->diff(new Carbon)->format('%R') == '+') && ($currentTime->diff($endTime)->format('%R') == '+') ) {
-                if($lastDate->day != $currentTime->day)
+                if($lastDate->day != $currentTime->day){
                     $is = 1;
+
+                    ScheduleMessages::where('id',$message->id)->update(array('end_date' => $currentTime->toDateString()));
+                }
             }
+            //end_date is to find if different day
             // time correct another day
             if($is == 1){
 
@@ -74,8 +79,6 @@ class SendScheduleMessages extends Command
                         } else {
                             if($message->every_t == 0) {
                                 $flag = 1;
-                            //    $currentDate = $currentTime->addDays(1);
-                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
                             }
                             $message->every_t++;
                             $message->every_t = $message->every_t % $message->every;
@@ -85,7 +88,6 @@ class SendScheduleMessages extends Command
 
                         if($message->every_t == 0) {
                             $flag = 1;
-                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
                         }
                         $message->every_t++;
                         $message->every_t = $message->every_t % $message->every;
@@ -97,7 +99,6 @@ class SendScheduleMessages extends Command
                             if($message->every_t == 0) {
                                 $flag = 1;
                                 $message->repeat --;
-                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
                                 ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
                             }
                             $message->every_t++;
@@ -106,47 +107,334 @@ class SendScheduleMessages extends Command
                         }
                     }
                 } else if($message->frequency == 'weekly') {
+                    dispatch((new SendMessage(Message::create([
+                        'account_id' => 1,
+                        'sender'     => $message->sender,
+                        'receiver'   => $message->receiver,
+                        'text'       => $message->text,
+                        'direction'  => 'outbound',
+                        'status'     => 'pending',
+                        'folder'     => 'chat',
+                    ]))));
                     if($message->repeat == -1) { //on Date
                         $endDate = new Carbon($message->repeat_end);
                         if( $endDate->diff(new Carbon)->format('%R') == '+' ) {
                             ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
                         } else {
-                            if($message->every_t == 0) {
-                                $flag = 1;
-                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
-                            }
-                            $message->every_t++;
-                            $message->every_t = $message->every_t % $message->every;
-                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                            $weekArray = explode(',',$message->dow);
+                            if(in_array($currentTime->dayOfWeek, $weekArray)) {
+                                if($message->every_t == sizeof($weekArray)) {
+                                    ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                }
+
+                                $st = new Carbon($message->last_date);
+                                $st = $st->addDays(7);
+                                if($st->diff(new Carbon)->format('%R') == '-') {
+                                    $flag = 1;
+                                    $message->every_t --;
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                                } else {
+                                    $st = new Carbon($message->last_date);
+                                    $st = $st->addDays($message->every*7);
+                                    if($st->diff(new Carbon)->format('%R') == '-') {
+                                        
+                                    } else {
+                                        $message->every_t = sizeof($weekArray);
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                                    }
+                                }
+                            }                            
                         }
                     } else if($message->repeat == -2) { //Never end repeat
 
-                        if($message->every_t == 0) {
-                            $flag = 1;
-                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
-                        }
-                        $message->every_t++;
-                        $message->every_t = $message->every_t % $message->every;
-                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                        $weekArray = explode(',',$message->dow);
+                        if(in_array($currentTime->dayOfWeek, $weekArray)) {
+                            if($message->every_t == sizeof($weekArray)) {
+                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                            }
+
+                            $st = new Carbon($message->last_date);
+                            $st = $st->addDays(7);
+                            if($st->diff(new Carbon)->format('%R') == '-') {
+                                $flag = 1;
+                                $message->every_t --;
+                                ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                            } else {
+                                $st = new Carbon($message->last_date);
+                                $st = $st->addDays($message->every*7);
+                                if($st->diff(new Carbon)->format('%R') == '-') {
+                                    
+                                } else {
+                                    $message->every_t = sizeof($weekArray);
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                                }
+                            }
+                        }  
                     } else { //repeat times
                         if($message->repeat == 0)
                             ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
                         else {
-                            if($message->every_t == 0) {
-                                $flag = 1;
-                                $message->repeat --;
-                                ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
-                                ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                            $weekArray = explode(',',$message->dow);
+                            if(in_array($currentTime->dayOfWeek, $weekArray)) {
+
+                                if($message->every_t == sizeof($weekArray)) {
+                                    ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                }
+
+                                $st = new Carbon($message->last_date);
+                                $st = $st->addDays(7);
+                                if($st->diff(new Carbon)->format('%R') == '-') {
+                                    $flag = 1;
+                                    $message->repeat --;
+                                    ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                    $message->every_t --;
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                                } else {
+                                    $st = new Carbon($message->last_date);
+                                    $st = $st->addDays($message->every*7);
+                                    if($st->diff(new Carbon)->format('%R') == '-') {
+                                        
+                                    } else {
+                                        $message->every_t = sizeof($weekArray);
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
+                                    }
+                                }
                             }
-                            $message->every_t++;
-                            $message->every_t = $message->every_t % $message->every;
-                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $message->every_t));
                         }
                     }
                 } else if($message->frequency == 'monthly') {
+                    if($message->repeat == -1) { //on Date
+                        $endDate = new Carbon($message->repeat_end);
+                        if( $endDate->diff(new Carbon)->format('%R') == '+' ) {
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        } else {
+                            if($message->month_weekend_turn == "") {
+                                $monthArray = explode(',',$message->dom);
+                                if(in_array($currentTime->day, $monthArray)) {
+                                    $last_date = new Carbon($message->last_date);
+                                    $next = $last_date->addMonths($message->every);
+                                    if( $currentTime->month == $message->every_t ) {
+                                        $flag = 1;
+                                    } else if($next->month == $currentTime->month){
+                                        $flag =1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                    }
+                                }
+  
+                            } else {
+                                $str = $message->month_weekend_turn.' '.$message->month_weekend_day.' of this month';
+                                $theday = new Carbon($str);
+                                $last_date = new Carbon($message->last_date);
+                                $next = $last_date->addMonths($message->every);
+                                if($currentTime->toDateString() == $theday->toDateString()){
+                                    if( $currentTime->month == $message->every_t ) {
+                                        $flag = 1;
+                                    } else if($next->month == $currentTime->month){
+                                        $flag = 1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                    }
+                                }
+                            }
+                            
+                            
+                        }
+                    } else if($message->repeat == -2) { //Never end repeat
 
-                } else {
+                        if($message->month_weekend_turn == "") {
+                            $monthArray = explode(',',$message->dom);
+                            if(in_array($currentTime->day, $monthArray)) {
+                                $last_date = new Carbon($message->last_date);
+                                $next = $last_date->addMonths($message->every);
+                                if( $currentTime->month == $message->every_t ) {
+                                    $flag = 1;
+                                } else if($next->month == $currentTime->month){
+                                    $flag =1;
+                                    ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                }
+                            }
 
+                        } else {
+                            $str = $message->month_weekend_turn.' '.$message->month_weekend_day.' of this month';
+                            $theday = new Carbon($str);
+                            $last_date = new Carbon($message->last_date);
+                            $next = $last_date->addMonths($message->every);
+                            if($currentTime->toDateString() == $theday->toDateString()){
+                                if( $currentTime->month == $message->every_t ) {
+                                    $flag = 1;
+                                } else if($next->month == $currentTime->month){
+                                    $flag = 1;
+                                    ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                }
+                            }
+                        }
+                    } else { //repeat times
+                        if($message->repeat == 0)
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        else {
+                            if($message->month_weekend_turn == "") {
+                                $monthArray = explode(',',$message->dom);
+                                if(in_array($currentTime->day, $monthArray)) {
+                                    $last_date = new Carbon($message->last_date);
+                                    $next = $last_date->addMonths($message->every);
+                                    if( $currentTime->month == $message->every_t ) {
+                                        $flag = 1;
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                    } else if($next->month == $currentTime->month){
+                                        $flag =1;
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                    }
+                                }
+  
+                            } else {
+                                $str = $message->month_weekend_turn.' '.$message->month_weekend_day.' of this month';
+                                $theday = new Carbon($str);
+                                $last_date = new Carbon($message->last_date);
+                                $next = $last_date->addMonths($message->every);
+                                if($currentTime->toDateString() == $theday->toDateString()){
+                                    if( $currentTime->month == $message->every_t ) {
+                                        $flag = 1;
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                    } else if($next->month == $currentTime->month){
+                                        $flag = 1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->month));
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else { //yearly
+                    if($message->repeat == -1) { //on Date
+                        $endDate = new Carbon($message->repeat_end);
+                        if( $endDate->diff(new Carbon)->format('%R') == '+' ) {
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        } else {
+                            $yearArray = explode(',',$message->doy);
+                            if(in_array($currentTime->month, $yearArray)) {
+                                $last_date = new Carbon($message->last_date);
+                                $next = $last_date->addYears($message->every);
+                                if( $currentTime->year == $message->every_t ) {
+                                    if($message->year_weekend_turn == "")
+                                        $flag = 1;
+                                    else {
+                                        $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                        $theday = new Carbon($str);
+                                        if($currentTime->toDateString() == $theday->toDateString()){
+                                            $flag = 1;
+                                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        }
+                                    }
+                                } else if($next->year == $currentTime->year){
+                                    if($message->year_weekend_turn == "") {
+                                        $flag = 1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                    }
+                                    else {
+                                        $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                        $theday = new Carbon($str);
+                                        if($currentTime->toDateString() == $theday->toDateString()){
+                                            $flag = 1;
+                                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    } else if($message->repeat == -2) { //Never end repeat
+
+                        $yearArray = explode(',',$message->doy);
+                        if(in_array($currentTime->month, $yearArray)) {
+                            $last_date = new Carbon($message->last_date);
+                            $next = $last_date->addYears($message->every);
+                            if( $currentTime->year == $message->every_t ) {
+                                if($message->year_weekend_turn == "")
+                                    $flag = 1;
+                                else {
+                                    $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                    $theday = new Carbon($str);
+                                    if($currentTime->toDateString() == $theday->toDateString()){
+                                        $flag = 1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                    }
+                                }
+                            } else if($next->year == $currentTime->year){
+                                if($message->year_weekend_turn == "") {
+                                    $flag = 1;
+                                    ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                    ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                }
+                                else {
+                                    $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                    $theday = new Carbon($str);
+                                    if($currentTime->toDateString() == $theday->toDateString()){
+                                        $flag = 1;
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                    }
+                                }
+                            }
+                        }
+                    } else { //repeat times
+                        if($message->repeat == 0)
+                            ScheduleMessages::where('id',$message->id)->update(array('flagE',0));
+                        else {
+                            $yearArray = explode(',',$message->doy);
+                            if(in_array($currentTime->month, $yearArray)) {
+                                $last_date = new Carbon($message->last_date);
+                                $next = $last_date->addYears($message->every);
+                                if( $currentTime->year == $message->every_t ) {
+                                    if($message->year_weekend_turn == "") {
+                                        $flag = 1;
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                    }
+                                    else {
+                                        $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                        $theday = new Carbon($str);
+                                        if($currentTime->toDateString() == $theday->toDateString()){
+                                            $flag = 1;
+                                            $message->repeat --;
+                                            ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        }
+                                    }
+                                } else if($next->year == $currentTime->year){
+                                    if($message->year_weekend_turn == "") {
+                                        $flag = 1;
+                                        $message->repeat --;
+                                        ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                        ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                        ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                    }
+                                    else {
+                                        $str = $message->year_weekend_turn.' '.$message->year_weekend_day.' of this month';
+                                        $theday = new Carbon($str);
+                                        if($currentTime->toDateString() == $theday->toDateString()){
+                                            $flag = 1;
+                                            $message->repeat --;
+                                            ScheduleMessages::where('id',$message->id)->update(array('repeat' => $message->repeat));
+                                            ScheduleMessages::where('id',$message->id)->update(array('last_date' => $currentTime->toDateString()));
+                                            ScheduleMessages::where('id',$message->id)->update(array('every_t' => $currentTime->year));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 if($flag == 1) {
                     dispatch((new SendMessage(Message::create([

@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 //        $schedule->command(SendBirthDayMessages::class)->daily();
-        $schedule->command('SendBirthDayMessages:birthday')->everyMinute();
+//        $schedule->command('SendBirthDayMessages:birthday')->everyMinute();
         $schedule->command('SendScheduleMessages:run')->everyMinute();
     }
 

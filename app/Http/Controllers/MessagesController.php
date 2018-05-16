@@ -91,7 +91,6 @@ class MessagesController extends Controller
     public function send1()
     {
         $newSchedule = new ScheduleMessages();
-        $newSchedule->schedule_id = 1;
         $newSchedule->repeat = $_POST['repeat_times'];
         $newSchedule->frequency = $_POST['frequency_type'];
         $newSchedule->start_date = '2018-06-07';
@@ -190,15 +189,38 @@ class MessagesController extends Controller
                 /**
                  * @var $message Message
                  */
-                ScheduleMessages::where('flag',0)->update(array(
-                    'sender'    => $sender->did,
-                    'receiver'  => $receiver,
-                    'flag'      => 1,
-                    'text'      => __($request->input('text'), [
-                        'first_name' => $uContact->first_name,
-                        'last_name'  => $uContact->last_name,
-                    ]),
-                ));
+                $newSchedule = new ScheduleMessages();
+                $newSchedule->account_id = 1;
+                $newSchedule->sender = $sender->did;
+                $newSchedule->receiver = $receiver;
+        //        $newSchedule->mms = $mms;
+                $newSchedule->repeat = $request->input('repeat_times1',"");
+                $newSchedule->frequency = $request->input('frequency_type1',"");
+                $newSchedule->start_date = '2018-06-07';
+                $currentDate = new Carbon;
+                $newSchedule->last_date = $currentDate->toDateString();
+                $currentDate = $currentDate->addDays(1);
+                $newSchedule->end_date = $currentDate->toDateString();
+                $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
+                $newSchedule->end_time = $request->input('schedule_end_at_time1',"");
+                $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
+                $newSchedule->every = $request->input('every1',"");
+                $newSchedule->every_t = $request->input('every_t1',"");
+                if($request->input('frequency_type1',"") == 'monthly')
+                    $newSchedule->every_t = (new Carbon)->month;
+                if($request->input('frequency_type1',"") == 'yearly')
+                    $newSchedule->every_t = (new Carbon)->year;
+                $newSchedule->dow = $request->input('dow1',"");
+                $newSchedule->dom = $request->input('dom1',"");
+                $newSchedule->month_weekend_turn = $request->input('monthly_turn1',"");
+                $newSchedule->month_weekend_day = $request->input('monthly_day1',"");
+                $newSchedule->doy = $request->input('doy1',"");
+                $newSchedule->year_weekend_turn = $request->input('yearly_turn1',"");
+                $newSchedule->year_weekend_day = $request->input('yearly_day1',"");
+                $newSchedule->flag = 1;
+                $newSchedule->flagE = 1;
+                $newSchedule->text =$request->input('text');
+                $newSchedule->save();
             }
 
             return response()->json(['message' => 'Messages Successfully Scheduled']);
@@ -334,33 +356,81 @@ class MessagesController extends Controller
                                     });
 
         $group_id = uniqid("", true);
+        if($request->input('is_schedule_hidden',"") == '2') {
 
-        foreach ($group->contacts as $contact) {
-            if ($contact->phone != "") {
+            foreach ($group->contacts as $contact) {
+                if ($contact->phone != "") {
 
-                $uContact = Auth::user()->account->searchContact($contact->phone);
+                    $uContact = Auth::user()->account->searchContact($contact->phone);
 
-                /**
-                 * @var $message Message
-                 */
-                $message = Auth::user()->messages()->create(array_merge($mms, [
-                    'conversation_id' => $conversation->id,
-                    'group_id'        => $group_id,
-                    'sender'          => $sender->did,
-                    'receiver'        => $contact->phone,
-                    'text'            => __($request->input('text'), [
-                        'first_name' => $uContact->first_name,
-                        'last_name'  => $uContact->last_name,
-                    ]),
-                    'direction'       => 'outbound',
-                    'folder'          => 'chat',
-                    'status'          => 'pending',
-                ]));
-                dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
+                    /**
+                     * @var $message Message
+                     */
+
+                    $newSchedule = new ScheduleMessages();
+                    $newSchedule->account_id = 1;
+                    $newSchedule->sender = $sender->did;
+                    $newSchedule->receiver = $contact->phone;
+            //        $newSchedule->mms = $mms;
+                    $newSchedule->repeat = $request->input('repeat_times1',"");
+                    $newSchedule->frequency = $request->input('frequency_type1',"");
+                    $newSchedule->start_date = '2018-06-07';
+                    $currentDate = new Carbon;
+                    $newSchedule->last_date = $currentDate->toDateString();
+                    $currentDate = $currentDate->addDays(1);
+                    $newSchedule->end_date = $currentDate->toDateString();
+                    $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
+                    $newSchedule->end_time = $request->input('schedule_end_at_time1',"");
+                    $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
+                    $newSchedule->every = $request->input('every1',"");
+                    $newSchedule->every_t = $request->input('every_t1',"");
+                    if($request->input('frequency_type1',"") == 'monthly')
+                        $newSchedule->every_t = (new Carbon)->month;
+                    if($request->input('frequency_type1',"") == 'yearly')
+                        $newSchedule->every_t = (new Carbon)->year;
+                    $newSchedule->dow = $request->input('dow1',"");
+                    $newSchedule->dom = $request->input('dom1',"");
+                    $newSchedule->month_weekend_turn = $request->input('monthly_turn1',"");
+                    $newSchedule->month_weekend_day = $request->input('monthly_day1',"");
+                    $newSchedule->doy = $request->input('doy1',"");
+                    $newSchedule->year_weekend_turn = $request->input('yearly_turn1',"");
+                    $newSchedule->year_weekend_day = $request->input('yearly_day1',"");
+                    $newSchedule->flag = 1;
+                    $newSchedule->flagE = 1;
+                    $newSchedule->text = $request->input('text');
+                    $newSchedule->group_id = $group_id; 
+                    $newSchedule->conversation_id = $conversation->id; 
+                    $newSchedule->save();
+                }
             }
-        }
+            return response()->json(['message' => 'Messages Successfully Scheduled']);
+        } else {
+            foreach ($group->contacts as $contact) {
+                if ($contact->phone != "") {
 
-        return response()->json(['message' => 'Messages Successfully Send']);
+                    $uContact = Auth::user()->account->searchContact($contact->phone);
+
+                    /**
+                     * @var $message Message
+                     */
+                    $message = Auth::user()->messages()->create(array_merge($mms, [
+                        'conversation_id' => $conversation->id,
+                        'group_id'        => $group_id,
+                        'sender'          => $sender->did,
+                        'receiver'        => $contact->phone,
+                        'text'            => __($request->input('text'), [
+                            'first_name' => $uContact->first_name,
+                            'last_name'  => $uContact->last_name,
+                        ]),
+                        'direction'       => 'outbound',
+                        'folder'          => 'chat',
+                        'status'          => 'pending',
+                    ]));
+                    dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
+                }
+            }
+            return response()->json(['message' => 'Messages Successfully Send']);
+        }
     }
 
 

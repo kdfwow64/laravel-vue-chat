@@ -439,6 +439,9 @@ class SendScheduleMessages extends Command
                 if($flag == 1) {
                     dispatch((new SendMessage(Message::create([
                         'account_id' => 1,
+                        'group_id'   => $message->group_id,
+                        'conversation_id'   => $message->conversation_id,
+                        'mms'   => $message->mms,
                         'sender'     => $message->sender,
                         'receiver'   => $message->receiver,
                         'text'       => $message->text,

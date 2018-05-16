@@ -14,3 +14,11 @@ database/migrations/2018_05_07_210313_create_schedule_messages_table.php :create
 2018-5-9 18:00
 resources/views/components/popups/sms.blade.php
 MessageController.php
+
+
+https://carbon.nesbot.com/docs
+
+2018-5-15
+database/seeds/PackagesTableSeeder.php
+resources/views/layouts/dashboard.blade.php
+sms.blade.php

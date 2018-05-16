@@ -41,6 +41,7 @@
                                            data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
                                            data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>
+                                @if(Auth::user()->account->limits('recurring_function', false))
                                 <div class="row">
                                     <div class="col-md-6">
                                         <input type="radio" name="is_schedule" value="once" checked> Once
@@ -50,6 +51,7 @@
                                         <input type="radio" name="is_schedule" value="schedule"> Schedule
                                     </div>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -213,10 +215,10 @@
                                         </div>
                                     </div>
                                     <div class="row button_area">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-6">
-                                            <input type="button" style="margin-bottom: 10px;" value="OK" name="ok">
-                                            <input type="button" name="cancel" value="Cancel">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-11">
+                                            <input type="button" class="schedule_ok" style="margin-bottom: 10px;" value="Save" name="ok">
+                                            <span class="save_text">** Save before Send</span>
                                         </div>
                                     </div>
                                 </div>
@@ -238,6 +240,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="text" class="control-label">0/160 Chars(0 Messages)</label>
+                                @if(Auth::user()->account->limits('single_template', false))
                                 @if(Auth::user()->account->messageTemplates->count() > 0)
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
@@ -253,11 +256,12 @@
                                         </ul>
                                     </div>
                                 @endif
+                                @endif
                                 <textarea name="text" class="form-control" id="text" rows="3" style="resize: vertical"></textarea>
                             </div>
                         </div>
                     </div>
-                    @if(Auth::user()->account->limits('mms', false))
+                    @if(  Auth::user()->account->limits('single_mms', false))
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group">
@@ -459,12 +463,14 @@
                     sms_single.find(".daily").css('display','none');
                     sms_single.find(".daily").css('display','unset');
                     sms_single.find("input[name=is_schedule_hidden]").val('2');
+                    sms_single.find(".modal-footer .btn-info").prop('disabled',true);
 
                 } else {
                     sms_single.find("#start_at").prop('disabled',false);
                     sms_single.find("#start_at_time").prop('disabled',false);
                     sms_single.find(".schedule").css('display','none');
                     sms_single.find("input[name=is_schedule_hidden]").val('1');
+                    sms_single.find(".modal-footer .btn-info").prop('disabled',false);
                 }
             }).on("click",'input[name=frequency_type]',function() {
                 let str = '.'+$(this).val();
@@ -557,7 +563,7 @@
                     sms_single.find('.repeat_after').css('display','none');
                     sms_single.find('#repeat_on_date').css('display','unset');
                 }
-            }).on('click','input[type=button]',function() {
+            }).on('click','.schedule_ok',function() {
                 let repeat_times = -2;
                 let repeat_on_date = "";
                 let schedule_start_at_time = sms_single.find('#schedule_start_at_time').val();
@@ -661,8 +667,13 @@
                         yearly_day:yearly_day
                     },
                     success: function(data) {
-
-                        console.log(data);
+                        sms_single.find('.modal-footer .btn-info').prop('disabled',false);
+                        sms_single.find('.schedule_ok').prop('disabled',true);
+                        sms_single.find('.schedule_ok').css('opacity',0.5);
+                        sms_single.find('.save_text').css('color','grey');
+                    },
+                    error: function(data) {
+                        alert('Error');
                     }
 
                 });

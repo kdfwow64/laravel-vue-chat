@@ -261,12 +261,16 @@
                                         To numbers
                                     </a>
                                 </li>
+                                @if(Auth::user()->account->limits('single_only', false))
+                                
+                                @else
                                 <li>
                                     <a href="#sms-groups" data-toggle="modal">
                                         <i class="entypo-mail"></i>
                                         To groups
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>

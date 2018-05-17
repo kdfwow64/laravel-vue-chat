@@ -34,7 +34,11 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
     Route::get('contacts/{contact}/export', 'ContactsController@export');
     Route::post('contacts/import', 'ContactsController@import');
     Route::delete('contacts', 'ContactsController@delete')->middleware('permission:contacts.delete');
+
     Route::resource('contacts', 'ContactsController', ['except' => ['create', 'show', 'destroy']]);
+    Route::get('schedule/all', 'ScheduleController@all');
+    Route::get('schedule/all1', 'ScheduleController@all1');
+    Route::resource('schedule', 'ScheduleController', ['except' => ['show']]);
     Route::resource('custom-labels', 'CustomLabelsController', [
         'except'     => ['create', 'show'],
         'parameters' => ['custom-labels' => 'label'],
@@ -72,7 +76,9 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
         Route::delete('/', 'MessagesController@archive')->middleware('permission:messages.send');
         Route::get('/', 'MessagesController@messages')->middleware('permission:messages.send');
         Route::post('mark-as-read', 'MessagesController@markAsRead')->middleware('permission:messages.send');
+
         Route::get('contact/{id}', 'MessagesController@contact')->middleware('permission:contacts.view');
+
         Route::post('contact/{id}', 'MessagesController@contactEdit')->middleware('permission:contacts.update');
         Route::get('conversations', 'MessagesController@conversations')->middleware('permission:messages.send');
         Route::post('conversations', 'MessagesController@createConversation')->middleware('permission:messages.send');

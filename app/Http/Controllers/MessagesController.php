@@ -444,6 +444,11 @@ class MessagesController extends Controller
         return ["phone" => $id];
     }
 
+    public function schedule($id)
+    {
+        return 1;
+    }
+
 
     public function contactEdit($id, Request $request)
     {

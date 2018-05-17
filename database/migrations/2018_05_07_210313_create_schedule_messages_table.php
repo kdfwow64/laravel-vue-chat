@@ -41,6 +41,7 @@ class CreateScheduleMessagesTable extends Migration
             $table->integer('mms')->nullable();
             $table->integer('group_id')->nullable();
             $table->integer('conversation_id')->nullable();
+            $table->foreign('account_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
 
         //    $table->foreign('account_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
         });

@@ -97,6 +97,13 @@
                             </a>
                         </li>
                     @endif
+                    @if(Auth::user()->can('schedule.view'))
+                        <li>
+                            <a href="{{url('schedule')}}">
+                                <span class="title">Schedule</span>
+                            </a>
+                        </li>
+                    @endif
                     @if(Auth::user()->can('messages.logs'))
                         <li>
                             <a href="{{url('messages/logs')}}">

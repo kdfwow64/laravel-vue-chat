@@ -28,6 +28,4 @@ database/migrate/scheduletable
 
 
 2018-5-16
-sms.blade.php
-database/migration/schedule table
-sendschedule messages.php
+dashboard.blade.php

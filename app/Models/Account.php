@@ -108,6 +108,11 @@ class Account extends Model
         return $this->hasMany(Contact::class);
     }
 
+    public function schedule()
+    {
+        return $this->hasMany(ScheduleMessages::class);
+    }
+
 
     public function numberToContact($number)
     {

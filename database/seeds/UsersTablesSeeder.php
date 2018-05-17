@@ -247,6 +247,10 @@ class UsersTablesSeeder extends Seeder
                 'name'         => 'messages.cancel',
                 'display_name' => 'Cancel Pending Messages',
             ],
+            [
+                'name'         => 'schedule.view',
+                'display_name' => 'Manage Schedules',
+            ],
         ]);
 
         $adminRole->permissions()->attach(Permission::all());

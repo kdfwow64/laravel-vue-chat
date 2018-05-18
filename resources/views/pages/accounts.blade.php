@@ -310,8 +310,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            @foreach($extra_limits as $limit)
+                        @foreach($extra_limits as $key => $limit)
+                            @if($key%3==0)
+                            <div class="row">
+                            @endif
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="limits[{{$limit['name']}}]" class="control-label">{{$limit['name']}}</label>
@@ -325,8 +327,11 @@
                                         @endif
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
+                            @if($key%3==2)
+                            </div>
+                            @endif
+                        @endforeach
+                            </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button class="btn btn-info">Save</button>

@@ -100,7 +100,8 @@
                     @if(Auth::user()->can('schedule.view'))
                         <li>
                             <a href="{{url('schedule')}}">
-                                <span class="title">Schedule</span>
+                                <i class="entypo-calendar"></i>
+                                <span class="title">Recurring</span>
                             </a>
                         </li>
                     @endif
@@ -262,21 +263,25 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="caret"></li>
+                                @if( Auth::user()->account->messagesSingle()->count() < Auth::user()->account->limits('single_sms'))
                                 <li>
                                     <a href="#sms-single" data-toggle="modal">
                                         <i class="entypo-user"></i>
                                         To numbers
                                     </a>
                                 </li>
-                                @if(Auth::user()->account->limits('single_only', false))
-                                
-                                @else
-                                <li>
-                                    <a href="#sms-groups" data-toggle="modal">
-                                        <i class="entypo-mail"></i>
-                                        To groups
-                                    </a>
-                                </li>
+                                @endif
+                                @if( Auth::user()->account->messagesGroup()->count() < Auth::user()->account->limits('group_sms'))
+                                    @if(Auth::user()->account->limits('single_only', false))
+                                    
+                                    @else
+                                    <li>
+                                        <a href="#sms-groups" data-toggle="modal">
+                                            <i class="entypo-mail"></i>
+                                            To groups
+                                        </a>
+                                    </li>
+                                    @endif
                                 @endif
                             </ul>
                         </li>

@@ -88,37 +88,6 @@ class MessagesController extends Controller
 
         return response(['message' => 'Logs successfully deleted']);
     }
-    public function send1()
-    {
-        $newSchedule = new ScheduleMessages();
-        $newSchedule->repeat = $_POST['repeat_times'];
-        $newSchedule->frequency = $_POST['frequency_type'];
-        $newSchedule->start_date = '2018-06-07';
-        $currentDate = new Carbon;
-        $newSchedule->last_date = $currentDate->toDateString();
-        $currentDate = $currentDate->addDays(1);
-        $newSchedule->end_date = $currentDate->toDateString();
-        $newSchedule->start_time = $_POST['schedule_start_at_time'];
-        $newSchedule->end_time = $_POST['schedule_end_at_time'];
-        $newSchedule->repeat_end = $_POST['repeat_on_date'];
-        $newSchedule->every = $_POST['every'];
-        $newSchedule->every_t = $_POST['every_t'];
-        if($_POST['frequency_type'] == 'monthly')
-            $newSchedule->every_t = (new Carbon)->month;
-        if($_POST['frequency_type'] == 'yearly')
-            $newSchedule->every_t = (new Carbon)->year;
-        $newSchedule->dow = $_POST['dow'];
-        $newSchedule->dom = $_POST['dom'];
-        $newSchedule->month_weekend_turn = $_POST['monthly_turn'];
-        $newSchedule->month_weekend_day = $_POST['monthly_day'];
-        $newSchedule->doy = $_POST['doy'];
-        $newSchedule->year_weekend_turn = $_POST['yearly_turn'];
-        $newSchedule->year_weekend_day = $_POST['yearly_day'];
-        $newSchedule->flag = 0;
-        $newSchedule->flagE = 1;
-        $newSchedule->save();
-        return 1;
-    }
 
 
     public function send(Request $request)
@@ -446,7 +415,12 @@ class MessagesController extends Controller
 
     public function schedule($id)
     {
-        return 1;
+        $schedule = Auth::user()->account->schedule()->where('id', $id)->first();
+        if ($schedule) {
+            return $schedule;
+        }
+
+        return ["id" => $id];
     }
 
 
@@ -499,6 +473,13 @@ class MessagesController extends Controller
         return response()->json(['message' => 'Contact successfully updated']);
     }
 
+    public function scheduleEdit(Request $request)
+    {
+        $id = $request->input("sid",'');
+        $text = $request->input("text",'');
+        ScheduleMessages::where('id',$id)->update(array('text' => $text));
+        return response()->json(['message' => 'Schedule Text successfully updated']);
+    }
 
     public function chat()
     {

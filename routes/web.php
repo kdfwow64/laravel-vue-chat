@@ -38,7 +38,8 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
     Route::resource('contacts', 'ContactsController', ['except' => ['create', 'show', 'destroy']]);
     Route::get('schedule/all', 'ScheduleController@all');
     Route::get('schedule/all1', 'ScheduleController@all1');
-    Route::resource('schedule', 'ScheduleController', ['except' => ['show']]);
+    Route::delete('schedule', 'ScheduleController@delete')->middleware('permission:schedule.delete');
+    Route::resource('schedule', 'ScheduleController', ['except' => ['show','create','destroy']]);
     Route::resource('custom-labels', 'CustomLabelsController', [
         'except'     => ['create', 'show'],
         'parameters' => ['custom-labels' => 'label'],
@@ -66,10 +67,13 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
     ]);
     Route::delete('forwards', 'ForwardingController@delete')->middleware('permission:forwarding.delete');;
     Route::resource('forwards', 'ForwardingController', ['except' => ['create', 'show', 'destroy']]);
+
+
     Route::group(['prefix' => 'messages'], function () {
         Route::post('/', 'MessagesController@sendTest')->middleware('permission:messages.send');
         Route::post('send', 'MessagesController@send')->middleware('permission:messages.send');
         Route::post('send1', 'MessagesController@send1')->middleware('permission:messages.send');
+        Route::post('edit', 'MessagesController@scheduleEdit')->middleware('permission:schedule.update');
         Route::post('send-group', 'MessagesController@sendGroups')->middleware('permission:messages.send');
         Route::post('chat', 'MessagesController@chat')->middleware('permission:messages.send');
         Route::post('last-messages', 'MessagesController@lastMessages')->middleware('permission:messages.send');
@@ -78,8 +82,10 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
         Route::post('mark-as-read', 'MessagesController@markAsRead')->middleware('permission:messages.send');
 
         Route::get('contact/{id}', 'MessagesController@contact')->middleware('permission:contacts.view');
+        Route::get('schedule/{id}', 'MessagesController@schedule')->middleware('permission:schedule.view');
 
         Route::post('contact/{id}', 'MessagesController@contactEdit')->middleware('permission:contacts.update');
+        Route::post('schedule/{id}', 'MessagesController@scheduleEdit')->middleware('permission:schedule.update');
         Route::get('conversations', 'MessagesController@conversations')->middleware('permission:messages.send');
         Route::post('conversations', 'MessagesController@createConversation')->middleware('permission:messages.send');
         Route::put('conversations', 'MessagesController@updateConversation')->middleware('permission:messages.send');

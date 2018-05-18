@@ -821,7 +821,7 @@
                 } else if(frequency_type == 'weekly') {
                     every = sms_single.find('input[name=weekly_period]').val();
                     let i = 0;
-                    $('.weekly_table td').each(function(index){
+                    sms_single.find('.weekly_table td').each(function(index){
                         if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)
@@ -837,7 +837,7 @@
                         monthly_flag = 1;
                     if(monthly_flag == 0) {
                         let i = 0;
-                        $('.monthly_table td').each(function(index){
+                        sms_single.find('.monthly_table td').each(function(index){
                             if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)
@@ -858,7 +858,7 @@
                         yearly_flag = 1;
                     
                     let i = 0;
-                    $('.yearly_table td').each(function(index){
+                    sms_single.find('.yearly_table td').each(function(index){
                         if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)
@@ -1042,7 +1042,7 @@
                 } else if(frequency_type == 'weekly') {
                     every = sms_groups.find('input[name=weekly_period]').val();
                     let i = 0;
-                    $('.weekly_table td').each(function(index){
+                    sms_groups.find('.weekly_table td').each(function(index){
                         if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)
@@ -1058,7 +1058,7 @@
                         monthly_flag = 1;
                     if(monthly_flag == 0) {
                         let i = 0;
-                        $('.monthly_table td').each(function(index){
+                        sms_groups.find('.monthly_table td').each(function(index){
                             if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)
@@ -1079,7 +1079,7 @@
                         yearly_flag = 1;
                     
                     let i = 0;
-                    $('.yearly_table td').each(function(index){
+                    sms_groups.find('.yearly_table td').each(function(index){
                         if($(this).hasClass('selected_td')) {
                             i++;
                             if(i > 1)

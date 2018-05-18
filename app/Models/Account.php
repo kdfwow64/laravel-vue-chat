@@ -200,6 +200,20 @@ class Account extends Model
     }
 
 
+    public function messagesSingle()
+    {
+        return $this->hasMany(Message::class)
+                    ->where('group_id',null);
+    }
+
+
+    public function messagesGroup()
+    {
+        return $this->hasMany(Message::class)
+                    ->whereNotNull('group_id');
+    }
+
+
     public function conversations()
     {
         return $this->hasMany(Conversation::class);

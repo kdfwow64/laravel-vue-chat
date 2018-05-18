@@ -251,6 +251,14 @@ class UsersTablesSeeder extends Seeder
                 'name'         => 'schedule.view',
                 'display_name' => 'Manage Schedules',
             ],
+            [
+                'name'         => 'schedule.delete',
+                'display_name' => 'Delete Schedules',
+            ],
+            [
+                'name'         => 'schedule.update',
+                'display_name' => 'Edit Schedules',
+            ],
         ]);
 
         $adminRole->permissions()->attach(Permission::all());

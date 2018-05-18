@@ -188,7 +188,9 @@ class MessagesController extends Controller
                 $newSchedule->year_weekend_day = $request->input('yearly_day1',"");
                 $newSchedule->flag = 1;
                 $newSchedule->flagE = 1;
-                $newSchedule->text =$request->input('text');
+
+                $text = $request->input('text');
+                $newSchedule->text = str_replace(":first_name", $uContact->first_name, $text);
                 $newSchedule->save();
             }
 
@@ -201,13 +203,12 @@ class MessagesController extends Controller
                 /**
                  * @var $message Message
                  */
+                $text = $request->input('text');
+                $text = str_replace(":first_name", $uContact->first_name, $text);
                 $message = Auth::user()->messages()->create(array_merge($mms, [
                     'sender'    => $sender->did,
                     'receiver'  => $receiver,
-                    'text'      => __($request->input('text'), [
-                        'first_name' => $uContact->first_name,
-                        'last_name'  => $uContact->last_name,
-                    ]),
+                    'text'      => $text,
                     'direction' => 'outbound',
                     'folder'    => 'chat',
                     'status'    => 'pending',
@@ -366,7 +367,8 @@ class MessagesController extends Controller
                     $newSchedule->year_weekend_day = $request->input('yearly_day1',"");
                     $newSchedule->flag = 1;
                     $newSchedule->flagE = 1;
-                    $newSchedule->text = $request->input('text');
+                    $text = $request->input('text');
+                $newSchedule->text = str_replace(":first_name", $uContact->first_name, $text);
                     $newSchedule->group_id = $group_id; 
                     $newSchedule->conversation_id = $conversation->id; 
                     $newSchedule->save();
@@ -382,15 +384,14 @@ class MessagesController extends Controller
                     /**
                      * @var $message Message
                      */
+                    $text = $request->input('text');
+                    $text = str_replace(":first_name", $uContact->first_name, $text);
                     $message = Auth::user()->messages()->create(array_merge($mms, [
                         'conversation_id' => $conversation->id,
                         'group_id'        => $group_id,
                         'sender'          => $sender->did,
                         'receiver'        => $contact->phone,
-                        'text'            => __($request->input('text'), [
-                            'first_name' => $uContact->first_name,
-                            'last_name'  => $uContact->last_name,
-                        ]),
+                        'text'            => $text,
                         'direction'       => 'outbound',
                         'folder'          => 'chat',
                         'status'          => 'pending',

@@ -83,10 +83,12 @@
                     datatype: "json",
                     datafields: [
                         {name: 'id', type: 'integer'},
+                        {name: 'sender', type: 'string'},
+                        {name: 'receiver', type: 'string'},
                         {name: 'frequency', type: 'string'},
                         {name: 'start_time', type: 'time'},
                         {name: 'end_time', type: 'time'},
-                        {name: 'repeat_end', type: 'date'},
+                        {name: 'repeat_end', type: 'string'},
                         {name: 'text', type: 'string'}
                     ],
                     cache: false,
@@ -184,6 +186,8 @@
                     },
                     @endif
                     columns: [
+                        {text: 'Sender', datafield: 'sender', cellsalign: 'center', align: 'center'},
+                        {text: 'Receiver', datafield: 'receiver', cellsalign: 'center', align: 'center'},
                         {text: 'Frequency', datafield: 'frequency', cellsalign: 'center', align: 'center'},
                         {text: 'Start Time', datafield: 'start_time', cellsalign: 'center', align: 'center'},
                         {text: 'End Time', datafield: 'end_time', cellsalign: 'center', align: 'center'},

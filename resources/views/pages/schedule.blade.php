@@ -20,10 +20,10 @@
                         <input type="hidden" name="sid" id="sid">
                         {{csrf_field()}}
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="text" class="control-label">Schedule Text</label>
-                                    <input id="text" name="text" class="form-control">
+                                    <textarea id="text" name="text" class="form-control"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -85,6 +85,7 @@
                         {name: 'id', type: 'integer'},
                         {name: 'sender', type: 'string'},
                         {name: 'receiver', type: 'string'},
+                        {name: 'group_id', type: 'string'},
                         {name: 'frequency', type: 'string'},
                         {name: 'start_time', type: 'time'},
                         {name: 'end_time', type: 'time'},
@@ -188,6 +189,7 @@
                     columns: [
                         {text: 'Sender', datafield: 'sender', cellsalign: 'center', align: 'center'},
                         {text: 'Receiver', datafield: 'receiver', cellsalign: 'center', align: 'center'},
+                        {text: 'GroupId', datafield: 'group_id', cellsalign: 'center', align: 'center'},
                         {text: 'Frequency', datafield: 'frequency', cellsalign: 'center', align: 'center'},
                         {text: 'Start Time', datafield: 'start_time', cellsalign: 'center', align: 'center'},
                         {text: 'End Time', datafield: 'end_time', cellsalign: 'center', align: 'center'},

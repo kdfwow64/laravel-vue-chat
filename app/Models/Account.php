@@ -90,6 +90,13 @@ class Account extends Model
 
     }
 
+    public function limits1($type, $default = 0)
+    {
+        $account = $this->limits[$type] ?? $default;
+        $package = $this->package->limits($type, $default);
+        return $account;
+    }
+
 
     public function expired()
     {
@@ -210,7 +217,8 @@ class Account extends Model
     public function messagesGroup()
     {
         return $this->hasMany(Message::class)
-                    ->whereNotNull('group_id');
+                    ->whereNotNull('group_id')
+                    ->groupBy('group_id');
     }
 
 

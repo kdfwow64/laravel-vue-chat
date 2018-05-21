@@ -213,7 +213,7 @@ class MessagesController extends Controller
                     'folder'    => 'chat',
                     'status'    => 'pending',
                 ]));
-                dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
+                dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i", $request->input('start_at'))));
                 $messages[] = $message;
             }
 
@@ -396,7 +396,7 @@ class MessagesController extends Controller
                         'folder'          => 'chat',
                         'status'          => 'pending',
                     ]));
-                    dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i:s", $request->input('start_at'))));
+                    dispatch((new SendMessage($message))->delay(Carbon::createFromFormat("Y-m-d H:i", $request->input('start_at'))));
                 }
             }
             return response()->json(['message' => 'Messages Successfully Send']);

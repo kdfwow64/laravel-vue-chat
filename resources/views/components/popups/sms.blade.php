@@ -54,10 +54,13 @@
                                 <label for="start_at" class="control-label">Send At(EDT Time)</label>
                                 <div class="date-and-time">
                                     <input id="start_at" name="start_at_date" class="form-control datepicker"
-                                           data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}">
-                                    <input id="start_at_time" name="start_at_time" class="form-control timepicker"
-                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
-                                           data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
+                                           data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}"/>
+                                    <input type="hidden" id="start_at_time" name="start_at_time" class="form-control timepicker"
+                                           data-template="dropdown" data-show-seconds="false" data-show-meridian="false"
+                                           data-minute-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
+                                    <input id="start_at_timeP" name="start_at_timeP" class="form-control timepicker"
+                                           data-template="dropdown" data-show-seconds="false" data-show-meridian="true"
+                                           data-minute-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>
                                 @if(Auth::user()->account->limits('recurring_function', false))
                                 <div class="row">
@@ -242,12 +245,14 @@
                                 <div class="col-md-3 time_area">
                                     <div class="row">
                                         Start time:
-                                        <input id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
-                                               data-template="dropdown" data-show-meridian="false" value="09:00"/>
+                                        <input id="schedule_start_at_timeP" name="schedule_start_at_timeP" class="form-control timepicker"
+                                               data-template="dropdown" data-show-meridian="true" value="09:00"/>
+                                        <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker" data-template="dropdown" data-show-meridian="true" value="09:00"/>
                                     </div>
                                     <div class="row">
                                         End time:
-                                        <input id="schedule_end_at_time" style="margin-bottom: 10px;" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="false"/>
+                                        <input id="schedule_end_at_timeP" style="margin-bottom: 10px;" name="schedule_end_at_timeP" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
+                                        <input id="schedule_end_at_time" type="hidden" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
                                     </div>
                                 </div>
                             </div>
@@ -371,9 +376,12 @@
                                 <div class="date-and-time">
                                     <input id="start_at" name="start_at_date" class="form-control datepicker"
                                            data-format="yyyy-mm-dd" value="{{Carbon\Carbon::now()->toDateString()}}">
-                                    <input id="start_at_time" name="start_at_time" class="form-control timepicker"
-                                           data-template="dropdown" data-show-seconds="true" data-show-meridian="false"
-                                           data-minute-step="1" data-second-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
+                                    <input type="hidden" id="start_at_time" name="start_at_time" class="form-control timepicker"
+                                           data-template="dropdown" data-show-seconds="false" data-show-meridian="false"
+                                           data-minute-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
+                                    <input id="start_at_timeP" name="start_at_timeP" class="form-control timepicker"
+                                           data-template="dropdown" data-show-seconds="false" data-show-meridian="true"
+                                           data-minute-step="5" value="{{Carbon\Carbon::now()->toTimeString()}}"/>
                                 </div>
                                 @if(Auth::user()->account->limits('recurring_function', false))
                                 <div class="row">
@@ -558,12 +566,15 @@
                                 <div class="col-md-3 time_area">
                                     <div class="row">
                                         Start time:
-                                        <input id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
+                                        <input id="schedule_start_at_timeP" name="schedule_start_at_timeP" class="form-control timepicker"
+                                               data-template="dropdown" data-show-meridian="true" value="09:00"/>
+                                        <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
                                                data-template="dropdown" data-show-meridian="false" value="09:00"/>
                                     </div>
                                     <div class="row">
                                         End time:
-                                        <input id="schedule_end_at_time" style="margin-bottom: 10px;" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="false"/>
+                                        <input id="schedule_end_at_timeP" style="margin-bottom: 10px;" name="schedule_end_at_timeP" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
+                                        <input type="hidden" id="schedule_end_at_time" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="false"/>
                                     </div>
                                 </div>
                             </div>
@@ -686,7 +697,7 @@
             }).on("click",'input[name=is_schedule]',function() {
                 if($(this).val() == 'schedule') {
                     sms_single.find("#start_at").prop('disabled',true);
-                    sms_single.find("#start_at_time").prop('disabled',true);
+                    sms_single.find("#start_at_timeP").prop('disabled',true);
                     sms_single.find(".schedule").css('display','unset');
                     sms_single.find(".daily").css('display','none');
                     sms_single.find(".daily").css('display','unset');
@@ -695,7 +706,7 @@
 
                 } else {
                     sms_single.find("#start_at").prop('disabled',false);
-                    sms_single.find("#start_at_time").prop('disabled',false);
+                    sms_single.find("#start_at_timeP").prop('disabled',false);
                     sms_single.find(".schedule").css('display','none');
                     sms_single.find("input[name=is_schedule_hidden]").val('1');
                     sms_single.find(".modal-footer .btn-info").css('display','unset');
@@ -769,7 +780,44 @@
                     $(this).val(1);
                     $(this).focus();
                 }
+            }).on("change",'#start_at_timeP', function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_single.find('#start_at_time').val(str);
+            }).on("change","#schedule_start_at_timeP", function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_single.find('#schedule_start_at_time').val(str);
+            }).on("change","#schedule_end_at_timeP", function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_single.find('#schedule_end_at_time').val(str);
             }).on('change','.timepicker',function() {
+                /*
                 var st = parseInt(sms_single.find('#schedule_start_at_time').val().replace(':',''));
                 var en = parseInt(sms_single.find('#schedule_end_at_time').val().replace(':',''));
                 if(st>en) {
@@ -778,7 +826,7 @@
                     else
                         $(this).val(sms_single.find('#schedule_start_at_time').val());
                     $(this).focus();
-                }
+                }*/
             }).on('change','#schedule_repeat',function() {
                 if($(this).val() == 'Never') {
                     sms_single.find('.repeat_after').css('display','none');
@@ -990,8 +1038,44 @@
                     $(this).val(1);
                     $(this).focus();
                 }
+            }).on("change",'#start_at_timeP', function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_groups.find('#start_at_time').val(str);
+            }).on("change","#schedule_start_at_timeP", function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_groups.find('#schedule_start_at_time').val(str);
+            }).on("change","#schedule_end_at_timeP", function() {
+                var str = $(this).val();
+                if(str.includes("PM"))
+                {
+                    str = str.replace(" PM","");
+                    var tim = str.split(":");
+                    s1 = parseInt(tim[0]) + 12;
+                    str = s1 + ":" + tim[1];
+                } else {
+                    str = str.replace(" AM","");
+                }
+                sms_groups.find('#schedule_end_at_time').val(str);
             }).on('change','.timepicker',function() {
-                var st = parseInt(sms_groups.find('#schedule_start_at_time').val().replace(':',''));
+            /*    var st = parseInt(sms_groups.find('#schedule_start_at_time').val().replace(':',''));
                 var en = parseInt(sms_groups.find('#schedule_end_at_time').val().replace(':',''));
                 if(st>en) {
                     if($(this).attr('id') == 'schedule_start_at_time')
@@ -999,7 +1083,7 @@
                     else
                         $(this).val(sms_groups.find('#schedule_start_at_time').val());
                     $(this).focus();
-                }
+                }*/
             }).on('change','#schedule_repeat',function() {
                 if($(this).val() == 'Never') {
                     sms_groups.find('.repeat_after').css('display','none');

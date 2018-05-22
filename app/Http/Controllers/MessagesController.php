@@ -171,7 +171,6 @@ class MessagesController extends Controller
                 $currentDate = $currentDate->addDays(1);
                 $newSchedule->end_date = $currentDate->toDateString();
                 $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
-                $newSchedule->end_time = $request->input('schedule_end_at_time1',"");
                 $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
                 $newSchedule->every = $request->input('every1',"");
                 $newSchedule->every_t = $request->input('every_t1',"");
@@ -350,7 +349,6 @@ class MessagesController extends Controller
                     $currentDate = $currentDate->addDays(1);
                     $newSchedule->end_date = $currentDate->toDateString();
                     $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
-                    $newSchedule->end_time = $request->input('schedule_end_at_time1',"");
                     $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
                     $newSchedule->every = $request->input('every1',"");
                     $newSchedule->every_t = $request->input('every_t1',"");

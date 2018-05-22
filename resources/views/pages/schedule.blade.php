@@ -23,7 +23,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="text" class="control-label">Schedule Text</label>
-                                    <textarea id="text" name="text" class="form-control"></textarea>
+                                    <textarea id="text" name="text" style="max-width: 100%;" class="form-control"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,6 @@
                         {name: 'group_id', type: 'string'},
                         {name: 'frequency', type: 'string'},
                         {name: 'start_time', type: 'time'},
-                        {name: 'end_time', type: 'time'},
                         {name: 'repeat_end', type: 'string'},
                         {name: 'text', type: 'string'}
                     ],
@@ -154,8 +153,8 @@
                                 del_id.push(row.id);
                             });
                             BootstrapDialog.confirm({
-                                title: 'Contact Delete',
-                                message: 'Do you really want to delete contact?',
+                                title: 'Recurring Message Delete',
+                                message: 'Do you really want to delete this schedule?',
                                 type: BootstrapDialog.TYPE_DANGER,
                                 closable: true,
                                 draggable: false,
@@ -191,8 +190,7 @@
                         {text: 'Receiver', datafield: 'receiver', cellsalign: 'center', align: 'center'},
                         {text: 'GroupId', datafield: 'group_id', cellsalign: 'center', align: 'center'},
                         {text: 'Frequency', datafield: 'frequency', cellsalign: 'center', align: 'center'},
-                        {text: 'Start Time', datafield: 'start_time', cellsalign: 'center', align: 'center'},
-                        {text: 'End Time', datafield: 'end_time', cellsalign: 'center', align: 'center'},
+                        {text: 'Send Time', datafield: 'start_time', cellsalign: 'center', align: 'center'},
                         {text: 'Repeat End Date', datafield: 'repeat_end', cellsalign: 'center', align: 'center'},
                         {text: 'Text', datafield: 'text', cellsalign: 'center', align: 'center'},
                         {

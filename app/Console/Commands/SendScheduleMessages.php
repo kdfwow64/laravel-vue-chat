@@ -56,10 +56,12 @@ class SendScheduleMessages extends Command
 
             $is = 0; // time correct and another day
             $startTime = new Carbon($message->start_time);
-            $endTime = new Carbon($message->end_time);
+            $endTime = new Carbon($message->start_time);
+            $endTime->addMinutes(30);
             $currentTime = new Carbon;
             $lastDate = new Carbon($message->end_date);
             if( ($startTime->diff(new Carbon)->format('%R') == '+') && ($currentTime->diff($endTime)->format('%R') == '+') ) {
+
                 if($lastDate->day != $currentTime->day){
                     $is = 1;
 

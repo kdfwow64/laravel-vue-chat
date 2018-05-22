@@ -14,7 +14,6 @@
                         <input type="hidden" name="repeat_times1">
                         <input type="hidden" name="repeat_on_date1">
                         <input type="hidden" name="schedule_start_at_time1">
-                        <input type="hidden" name="schedule_end_at_time1">
                         <input type="hidden" name="every1">
                         <input type="hidden" name="every_t1">
                         <input type="hidden" name="frequency_type1">
@@ -249,11 +248,6 @@
                                                data-template="dropdown" data-show-meridian="true" value="09:00"/>
                                         <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker" data-template="dropdown" data-show-meridian="true" value="09:00"/>
                                     </div>
-                                    <div class="row">
-                                        End time:
-                                        <input id="schedule_end_at_timeP" style="margin-bottom: 10px;" name="schedule_end_at_timeP" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
-                                        <input id="schedule_end_at_time" type="hidden" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -331,7 +325,6 @@
                         <input type="hidden" name="repeat_times1">
                         <input type="hidden" name="repeat_on_date1">
                         <input type="hidden" name="schedule_start_at_time1">
-                        <input type="hidden" name="schedule_end_at_time1">
                         <input type="hidden" name="every1">
                         <input type="hidden" name="every_t1">
                         <input type="hidden" name="frequency_type1">
@@ -571,11 +564,6 @@
                                         <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
                                                data-template="dropdown" data-show-meridian="false" value="09:00"/>
                                     </div>
-                                    <div class="row">
-                                        End time:
-                                        <input id="schedule_end_at_timeP" style="margin-bottom: 10px;" name="schedule_end_at_timeP" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="true"/>
-                                        <input type="hidden" id="schedule_end_at_time" name="schedule_end_at_time" class="form-control timepicker"  data-template="dropdown" value="10:00" data-show-meridian="false"/>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -804,18 +792,6 @@
                     str = str.replace(" AM","");
                 }
                 sms_single.find('#schedule_start_at_time').val(str);
-            }).on("change","#schedule_end_at_timeP", function() {
-                var str = $(this).val();
-                if(str.includes("PM"))
-                {
-                    str = str.replace(" PM","");
-                    var tim = str.split(":");
-                    s1 = parseInt(tim[0]) + 12;
-                    str = s1 + ":" + tim[1];
-                } else {
-                    str = str.replace(" AM","");
-                }
-                sms_single.find('#schedule_end_at_time').val(str);
             }).on('change','.timepicker',function() {
                 /*
                 var st = parseInt(sms_single.find('#schedule_start_at_time').val().replace(':',''));
@@ -843,7 +819,7 @@
                 let repeat_times = -2;
                 let repeat_on_date = "";
                 let schedule_start_at_time = sms_single.find('#schedule_start_at_time').val();
-                let schedule_end_at_time = sms_single.find('#schedule_end_at_time').val();
+                
                 let every = 1;
                 let frequency_type = sms_single.find('input[name=frequency_type]:checked').val();
                 let weekly_period = "";
@@ -924,7 +900,7 @@
                 sms_single.find('input[name=repeat_times1]').val(repeat_times);
                 sms_single.find('input[name=repeat_on_date1]').val(repeat_on_date);
                 sms_single.find('input[name=schedule_start_at_time1]').val(schedule_start_at_time);
-                sms_single.find('input[name=schedule_end_at_time1]').val(schedule_end_at_time);
+                
                 sms_single.find('input[name=every1]').val(every);
                 sms_single.find('input[name=every_t1]').val(every_t);
                 sms_single.find('input[name=frequency_type1]').val(frequency_type);
@@ -1062,18 +1038,6 @@
                     str = str.replace(" AM","");
                 }
                 sms_groups.find('#schedule_start_at_time').val(str);
-            }).on("change","#schedule_end_at_timeP", function() {
-                var str = $(this).val();
-                if(str.includes("PM"))
-                {
-                    str = str.replace(" PM","");
-                    var tim = str.split(":");
-                    s1 = parseInt(tim[0]) + 12;
-                    str = s1 + ":" + tim[1];
-                } else {
-                    str = str.replace(" AM","");
-                }
-                sms_groups.find('#schedule_end_at_time').val(str);
             }).on('change','.timepicker',function() {
             /*    var st = parseInt(sms_groups.find('#schedule_start_at_time').val().replace(':',''));
                 var en = parseInt(sms_groups.find('#schedule_end_at_time').val().replace(':',''));
@@ -1100,7 +1064,6 @@
                 let repeat_times = -2;
                 let repeat_on_date = "";
                 let schedule_start_at_time = sms_groups.find('#schedule_start_at_time').val();
-                let schedule_end_at_time = sms_groups.find('#schedule_end_at_time').val();
                 let every = 1;
                 let frequency_type = sms_groups.find('input[name=frequency_type]:checked').val();
                 let weekly_period = "";
@@ -1181,7 +1144,6 @@
                 sms_groups.find('input[name=repeat_times1]').val(repeat_times);
                 sms_groups.find('input[name=repeat_on_date1]').val(repeat_on_date);
                 sms_groups.find('input[name=schedule_start_at_time1]').val(schedule_start_at_time);
-                sms_groups.find('input[name=schedule_end_at_time1]').val(schedule_end_at_time);
                 sms_groups.find('input[name=every1]').val(every);
                 sms_groups.find('input[name=every_t1]').val(every_t);
                 sms_groups.find('input[name=frequency_type1]').val(frequency_type);

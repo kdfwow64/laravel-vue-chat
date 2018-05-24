@@ -89,6 +89,11 @@ class MessagesController extends Controller
         return response(['message' => 'Logs successfully deleted']);
     }
 
+    public function send1(Request $request) {
+        $id = $request->input('id');
+        $schedule = Auth::user()->account->schedule()->where('id',$id)->get(['*']);
+        return response()->json($schedule[0]);
+    }
 
     public function send(Request $request)
     {
@@ -168,7 +173,7 @@ class MessagesController extends Controller
                 $newSchedule->start_date = '2018-06-07';
                 $currentDate = new Carbon;
                 $newSchedule->last_date = $currentDate->toDateString();
-                $currentDate = $currentDate->addDays(1);
+                $currentDate = $currentDate->subDays(1);
                 $newSchedule->end_date = $currentDate->toDateString();
                 $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
                 $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
@@ -475,9 +480,45 @@ class MessagesController extends Controller
     public function scheduleEdit(Request $request)
     {
         $id = $request->input("sid",'');
-        $text = $request->input("text",'');
-        ScheduleMessages::where('id',$id)->update(array('text' => $text));
-        return response()->json(['message' => 'Schedule Text successfully updated']);
+
+        $repeat = $request->input('repeat_times1');
+        $frequency = $request->input('frequency_type1');
+        $currentDate = new Carbon;
+        $start_time = $request->input('schedule_start_at_time1');
+        $repeat_end = $request->input('repeat_on_date1');
+        $every = $request->input('every1');
+        $dow = $request->input('dow1');
+        $dom = $request->input('dom1');
+        $month_weekend_turn = $request->input('monthly_turn1');
+        $month_weekend_day = $request->input('monthly_day1');
+        $doy = $request->input('doy1');
+        $year_weekend_turn = $request->input('yearly_turn1');
+        $year_weekend_day = $request->input('yearly_day1');
+
+        $text = $request->input('text');
+
+        $schedule = Auth::user()->account->schedule()->where('id',$id)->get(['*']);
+        $uContact = Auth::user()->account->searchContact($schedule[0]['receiver']);
+        $text = str_replace(":first_name", $uContact->first_name, $text);
+
+
+        ScheduleMessages::where('id',$id)->update(array(
+            'text' => $text,
+            'repeat' => $repeat,
+            'frequency' => $frequency,
+            'start_time' => $start_time,
+            'repeat_end' => $repeat_end,
+            'every' => $every,
+            'dow' => $dow,
+            'dom' => $dom,
+            'month_weekend_turn' => $month_weekend_turn,
+            'month_weekend_day' => $month_weekend_day,
+            'doy' => $doy,
+            'year_weekend_turn' => $year_weekend_turn,
+            'year_weekend_day' => $year_weekend_day,
+
+        ));
+        return response()->json(['message' => 'Schedule successfully updated']);
     }
 
     public function chat()

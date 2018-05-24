@@ -687,8 +687,13 @@
                     sms_single.find("#start_at").prop('disabled',true);
                     sms_single.find("#start_at_timeP").prop('disabled',true);
                     sms_single.find(".schedule").css('display','unset');
-                    sms_single.find(".daily").css('display','none');
                     sms_single.find(".daily").css('display','unset');
+                    sms_single.find(".weekly").css('display','none');
+                    sms_single.find(".monthly").css('display','none');
+                    sms_single.find(".yearly").css('display','none');
+                    sms_single.find('.frequency_div input[type=radio]').eq(0).prop("checked",true);
+                    sms_single.find('.frequency_div').css('margin-top','0px');
+                    sms_single.find('.time_area').css('margin-top','5px');
                     sms_single.find("input[name=is_schedule_hidden]").val('2');
                     sms_single.find(".modal-footer .btn-info").css('display','none');
 

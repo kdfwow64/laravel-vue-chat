@@ -263,7 +263,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="caret"></li>
-                                @if( Auth::user()->account->messagesSingle()->count() < Auth::user()->account->limits1('single_sms'))
+                                @if( Auth::user()->account->messagesSingle()->count() < Auth::user()->account->limits('single_sms'))
                                 <li>
                                     <a href="#sms-single" data-toggle="modal">
                                         <i class="entypo-user"></i>
@@ -273,7 +273,7 @@
                                 @else
                                 <li>Single SMS limit</li>
                                 @endif
-                                @if( Auth::user()->account->messagesGroup()->count() < Auth::user()->account->limits1('group_sms'))
+                                @if( Auth::user()->account->messagesGroup()->count() < Auth::user()->account->limits('group_sms'))
                                     @if(Auth::user()->account->limits('single_only', false))
                                     
                                     @else

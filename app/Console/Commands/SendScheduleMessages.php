@@ -109,15 +109,6 @@ class SendScheduleMessages extends Command
                         }
                     }
                 } else if($message->frequency == 'weekly') {
-                    dispatch((new SendMessage(Message::create([
-                        'account_id' => 1,
-                        'sender'     => $message->sender,
-                        'receiver'   => $message->receiver,
-                        'text'       => $message->text,
-                        'direction'  => 'outbound',
-                        'status'     => 'pending',
-                        'folder'     => 'chat',
-                    ]))));
                     if($message->repeat == -1) { //on Date
                         $endDate = new Carbon($message->repeat_end);
                         if( $endDate->diff(new Carbon)->format('%R') == '+' ) {

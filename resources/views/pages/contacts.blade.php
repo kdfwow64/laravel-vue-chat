@@ -558,7 +558,28 @@
                             $(this).children().eq(2).children().eq(0).html(str);
                         });
                     }
-                });}, 0);
+                });}, 10);
+            }).on('click',function(event) {
+                setTimeout( function()  {$.ajax({
+                    url: "{{url('messages/groupa')}}",
+                    type: 'POST',
+                    success: function(result){
+                        $('#contenttablejqxgrid_contacts div[role=row]').each(function(){
+                            let temp = $(this).children().eq(3).children().eq(0).html();
+                            let str = "";
+                            for( i = 0 ; i < result.length ; i ++) {
+                                if(result[i]['phone'] == temp) {
+                                    if(str != "")
+                                        str += ",";
+                                    str += result[i]['group_name'];
+                                }
+                            }
+                            if(str == "null")
+                                str = "";
+                            $(this).children().eq(2).children().eq(0).html(str);
+                        });
+                    }
+                });}, 10);
             });
             $('body').on('click', '.item-edit', function () {
                 $.get(Config.defaultURL + "/contacts/" + $(this).data('id') + "/edit", function (data) {

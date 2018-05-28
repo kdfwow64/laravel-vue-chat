@@ -154,15 +154,12 @@ class MessagesController extends Controller
         }
 
         if ($request->hasFile('mms') ) {
+            
             $mms = [
-                'mms' => "https://user.textmymainnumber.com/storage/accounts/6/avatars/Vo4xqMaFmFhLTt8myxl5ZOMNZfTWYPkORmiN4wvv.png",
-            ];
-
-    /*        $mms = [
                 'mms' => url('storage/' . request()
                         ->file('mms')
                         ->storePublicly("accounts/{$request->user()->account_id}/mms", 'public')),
-            ];*/
+            ];
         } elseif ($request->has('mms_url') ) {
             $mms = ['mms' => $request->input('mms_url')];
         } else {

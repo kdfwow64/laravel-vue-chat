@@ -127,13 +127,17 @@ class MessagesController extends Controller
             $this->validate($request, ['text' => 'nullable|string|max:160',]);
         }
 
-        if ($request->hasFile('mms') && Auth::user()->account->limits('mms', false)) {
+        if ($request->hasFile('mms') ) {
             $mms = [
+                'mms' => "https://user.textmymainnumber.com/storage/accounts/6/avatars/Vo4xqMaFmFhLTt8myxl5ZOMNZfTWYPkORmiN4wvv.png",
+            ];
+
+    /*        $mms = [
                 'mms' => url('storage/' . request()
                         ->file('mms')
                         ->storePublicly("accounts/{$request->user()->account_id}/mms", 'public')),
-            ];
-        } elseif ($request->has('mms_url') && Auth::user()->account->limits('mms', false)) {
+            ];*/
+        } elseif ($request->has('mms_url') ) {
             $mms = ['mms' => $request->input('mms_url')];
         } else {
             $mms = [];
@@ -209,10 +213,14 @@ class MessagesController extends Controller
                  */
                 $text = $request->input('text');
                 $text = str_replace(":first_name", $uContact->first_name, $text);
+                
                 $message = Auth::user()->messages()->create(array_merge($mms, [
                     'sender'    => $sender->did,
                     'receiver'  => $receiver,
-                    'text'      => $text,
+                    'text'      => __($request->input('text'), [
+                        'first_name'    => $uContact->first_name,
+                        'last_name'     => $uContact->last_name,
+                    ]),
                     'direction' => 'outbound',
                     'folder'    => 'chat',
                     'status'    => 'pending',
@@ -287,13 +295,13 @@ class MessagesController extends Controller
             $this->validate($request, ['text' => 'nullable|string|max:160',]);
         }
 
-        if ($request->hasFile('mms') && Auth::user()->account->limits('mms', false)) {
+        if ($request->hasFile('mms') ) {
             $mms = [
                 'mms' => url('storage/' . request()
                         ->file('mms')
                         ->storePublicly("accounts/{$request->user()->account_id}/mms", 'public')),
             ];
-        } elseif ($request->has('mms_url') && Auth::user()->account->limits('mms', false)) {
+        } elseif ($request->has('mms_url') ) {
             $mms = ['mms' => $request->input('mms_url')];
         } else {
             $mms = [];
@@ -351,7 +359,7 @@ class MessagesController extends Controller
                     $newSchedule->start_date = '2018-06-07';
                     $currentDate = new Carbon;
                     $newSchedule->last_date = $currentDate->toDateString();
-                    $currentDate = $currentDate->addDays(1);
+                    $currentDate = $currentDate->subDays(1);
                     $newSchedule->end_date = $currentDate->toDateString();
                     $newSchedule->start_time = $request->input('schedule_start_at_time1',"");
                     $newSchedule->repeat_end = $request->input('repeat_on_date1',"");
@@ -372,7 +380,7 @@ class MessagesController extends Controller
                     $newSchedule->flagE = 1;
                     $text = $request->input('text');
                 $newSchedule->text = str_replace(":first_name", $uContact->first_name, $text);
-                    $newSchedule->group_id = $group_id; 
+                    $newSchedule->group_id = $group->id; 
                     $newSchedule->conversation_id = $conversation->id; 
                     $newSchedule->save();
                 }
@@ -389,6 +397,7 @@ class MessagesController extends Controller
                      */
                     $text = $request->input('text');
                     $text = str_replace(":first_name", $uContact->first_name, $text);
+
                     $message = Auth::user()->messages()->create(array_merge($mms, [
                         'conversation_id' => $conversation->id,
                         'group_id'        => $group_id,
@@ -484,8 +493,13 @@ class MessagesController extends Controller
         $repeat = $request->input('repeat_times1');
         $frequency = $request->input('frequency_type1');
         $currentDate = new Carbon;
+        $currentDate = $currentDate->subDays(1);
+        $end_date = $currentDate->toDateString();
+
         $start_time = $request->input('schedule_start_at_time1');
         $repeat_end = $request->input('repeat_on_date1');
+
+
         $every = $request->input('every1');
         $dow = $request->input('dow1');
         $dom = $request->input('dom1');
@@ -511,6 +525,7 @@ class MessagesController extends Controller
             'every' => $every,
             'dow' => $dow,
             'dom' => $dom,
+            'end_date' => $end_date,
             'month_weekend_turn' => $month_weekend_turn,
             'month_weekend_day' => $month_weekend_day,
             'doy' => $doy,

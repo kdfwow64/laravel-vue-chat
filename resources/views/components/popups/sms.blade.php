@@ -167,7 +167,7 @@
                                                         <option>first</option>
                                                         <option>second</option>
                                                         <option>third</option>
-                                                        <option>forth</option>
+                                                        <option>fourth</option>
                                                         <option>fifth</option>
                                                     </select>
                                                 </div>
@@ -217,7 +217,7 @@
                                                     <option>first</option>
                                                     <option>second</option>
                                                     <option>third</option>
-                                                    <option>forth</option>
+                                                    <option>fourth</option>
                                                     <option>fifth</option>
                                                 </select>
                                             </div>
@@ -245,7 +245,7 @@
                                     <div class="row">
                                         Start time:
                                         <input id="schedule_start_at_timeP" name="schedule_start_at_timeP" class="form-control timepicker"
-                                               data-template="dropdown" data-show-meridian="true" value="09:00"/>
+                                               data-template="dropdown" data-show-meridian="true" value="{{Carbon\Carbon::now()->toDateString()}}"/>
                                         <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker" data-template="dropdown" data-show-meridian="true" value="09:00"/>
                                     </div>
                                 </div>
@@ -482,7 +482,7 @@
                                                         <option>first</option>
                                                         <option>second</option>
                                                         <option>third</option>
-                                                        <option>forth</option>
+                                                        <option>fourth</option>
                                                         <option>fifth</option>
                                                     </select>
                                                 </div>
@@ -532,7 +532,7 @@
                                                     <option>first</option>
                                                     <option>second</option>
                                                     <option>third</option>
-                                                    <option>forth</option>
+                                                    <option>fourth</option>
                                                     <option>fifth</option>
                                                 </select>
                                             </div>
@@ -560,7 +560,7 @@
                                     <div class="row">
                                         Start time:
                                         <input id="schedule_start_at_timeP" name="schedule_start_at_timeP" class="form-control timepicker"
-                                               data-template="dropdown" data-show-meridian="true" value="09:00"/>
+                                               data-template="dropdown" data-show-meridian="true" value="{{Carbon\Carbon::now()->toDateString()}}"/>
                                         <input type="hidden" id="schedule_start_at_time" name="schedule_start_at_time" class="form-control timepicker"
                                                data-template="dropdown" data-show-meridian="false" value="09:00"/>
                                     </div>

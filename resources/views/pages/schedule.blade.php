@@ -130,7 +130,7 @@
                                                             <option>first</option>
                                                             <option>second</option>
                                                             <option>third</option>
-                                                            <option>forth</option>
+                                                            <option>fourth</option>
                                                             <option>fifth</option>
                                                         </select>
                                                     </div>
@@ -180,7 +180,7 @@
                                                         <option>first</option>
                                                         <option>second</option>
                                                         <option>third</option>
-                                                        <option>forth</option>
+                                                        <option>fourth</option>
                                                         <option>fifth</option>
                                                     </select>
                                                 </div>
@@ -483,13 +483,17 @@
                             if(result['month_weekend_turn'] != null) {
                                 edit.find('.monthly_table').removeClass('enabled_table');
                                 edit.find('.monthly_table').css('opacity','0.5');
-                                edit.find('input[type=radio]').eq(1).prop("checked",true);
+                                edit.find('.monthly input[type=radio]').eq(1).prop("checked",true);
+                                edit.find('#monthly_turn').prop("disabled",false);
+                                edit.find('#monthly_turn').css("opacity",'1');
                                 edit.find('#monthly_turn').val(result['month_weekend_turn']);
+                                edit.find('#monthly_day').prop("disabled",false);
+                                edit.find('#monthly_day').css("opacity",'1');
                                 edit.find('#monthly_day').val(result['month_weekend_day']);
                             } else {
                                 edit.find('.monthly_table').addClass('enabled_table');
                                 edit.find('.monthly_table').css('opacity','1');
-                                edit.find('input[type=radio]').eq(0).prop("checked",true);
+                                edit.find('.monthly input[type=radio]').eq(0).prop("checked",true);
                                 let temp = result['dom'].split(',');
                                 for(i = 0 ; i<temp.length ; i++) {
                                     $('.monthly_table').find('td').eq(temp[i]-1).css('background-color','#657894');

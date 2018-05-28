@@ -73,6 +73,7 @@ Route::group(['middleware' => ['permission:dashboard.view', 'auth', 'ga']], func
         Route::post('/', 'MessagesController@sendTest')->middleware('permission:messages.send');
         Route::post('send', 'MessagesController@send')->middleware('permission:messages.send');
         Route::post('send1', 'MessagesController@send1')->middleware('permission:messages.send');
+        Route::post('groupa', 'MessagesController@groupa')->middleware('permission:messages.send');
         Route::post('edit', 'MessagesController@scheduleEdit')->middleware('permission:schedule.update');
         Route::post('send-group', 'MessagesController@sendGroups')->middleware('permission:messages.send');
         Route::post('chat', 'MessagesController@chat')->middleware('permission:messages.send');

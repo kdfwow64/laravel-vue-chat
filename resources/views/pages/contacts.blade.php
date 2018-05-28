@@ -384,6 +384,7 @@
     <script type="text/javascript" src="{{asset('assets/jqwidgets/globalization/translations.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
             var source =
                 {
                     datatype: "json",
@@ -505,6 +506,7 @@
                         });
                     },
                     @endif
+
                     columns: [
                         {
                             text: '',
@@ -515,6 +517,7 @@
                                 return "<a href=\"" + Config.defaultURL + "/contacts/" + contacts.jqxGrid('getrowdata', row).id + "/export\"><img src=\"" + value + "\" alt=\"\" class=\"img-circle\" width=\"26\" height=\"26\" style=\"padding: 3px\"></a>";
                             }
                         },
+                        {text: 'Group', datafield: 'id', cellsalign: 'center', align: 'center'},
                         {text: 'Phone', datafield: 'phone', cellsalign: 'center', align: 'center'},
                         {text: 'Name', datafield: 'name', cellsalign: 'center', align: 'center'},
                         {text: 'Company', datafield: 'company', cellsalign: 'center', align: 'center'},
@@ -535,6 +538,27 @@
                 $('#delete_contact').toggle(contacts.jqxGrid('getselectedrowindexes').length > 0);
             }).on('rowunselect', function (event) {
                 $('#delete_contact').toggle(contacts.jqxGrid('getselectedrowindexes').length > 0);
+            }).on('click',function(event) {
+                setTimeout( function()  {$.ajax({
+                    url: "{{url('messages/groupa')}}",
+                    type: 'POST',
+                    success: function(result){
+                        $('#contenttablejqxgrid_contacts div[role=row]').each(function(){
+                            let temp = $(this).children().eq(3).children().eq(0).html();
+                            let str = "";
+                            for( i = 0 ; i < result.length ; i ++) {
+                                if(result[i]['phone'] == temp) {
+                                    if(str != "")
+                                        str += ",";
+                                    str += result[i]['group_name'];
+                                }
+                            }
+                            if(str == "null")
+                                str = "";
+                            $(this).children().eq(2).children().eq(0).html(str);
+                        });
+                    }
+                });}, 0);
             });
             $('body').on('click', '.item-edit', function () {
                 $.get(Config.defaultURL + "/contacts/" + $(this).data('id') + "/edit", function (data) {
@@ -595,7 +619,28 @@
             $('#create,#edit').find('input[name=avatar]').change(function () {
                 readURL(this);
             });
+            
+            setTimeout( function()  {$.ajax({
+                    url: "{{url('messages/groupa')}}",
+                    type: 'POST',
+                    success: function(result){
+                        $('#contenttablejqxgrid_contacts div[role=row]').each(function(){
+                            let temp = $(this).children().eq(3).children().eq(0).html();
+                            let str = "";
+                            for( i = 0 ; i < result.length ; i ++) {
+                                if(result[i]['phone'] == temp) {
+                                    if(str != "")
+                                        str += ",";
+                                    str += result[i]['group_name'];
+                                }
+                            }
+                            if(str == "null")
+                                str = "";
+                            $(this).children().eq(2).children().eq(0).html(str);
+                        });
+                    }
+            });}, 0);
         });
-
+    
     </script>
 @endpush

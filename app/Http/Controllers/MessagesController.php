@@ -95,6 +95,32 @@ class MessagesController extends Controller
         return response()->json($schedule[0]);
     }
 
+    public function groupa(Request $request)
+    {
+
+    //    $this->authorize('groupa', Group::class);
+    //    $groups = Auth::user()->account->groups()->get(['*']);
+
+    //    return response()->json($groups);
+        $contacts = Auth::user()->account->contacts()
+                                         ->leftJoin('group_contacts', function (JoinClause $join){
+                                             $join->on('group_contacts.contact_id', '=', 'contacts.id');
+                                         })
+                                         ->leftJoin('groups', function (JoinClause $join){
+                                             $join->on('group_id', '=', 'groups.id');
+                                         });
+
+
+        $data = $contacts->get([
+            'contacts.*',
+            DB::raw('group_id'),
+            DB::raw("name as 'group_name'"),
+            DB::raw("CONCAT(first_name, ' ' ,last_name) as 'name'"),
+        ]);
+
+        return response()->json($data);
+    }
+
     public function send(Request $request)
     {
 
@@ -380,7 +406,7 @@ class MessagesController extends Controller
                     $newSchedule->flagE = 1;
                     $text = $request->input('text');
                 $newSchedule->text = str_replace(":first_name", $uContact->first_name, $text);
-                    $newSchedule->group_id = $group->id; 
+                    $newSchedule->group_id = $group->id;
                     $newSchedule->conversation_id = $conversation->id; 
                     $newSchedule->save();
                 }

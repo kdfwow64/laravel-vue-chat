@@ -211,7 +211,29 @@
                         </div>
 
 
-
+                        @if(  Auth::user()->account->limits('single_mms', false))
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="mms_url" class="control-label">MMS URL</label>
+                                        <input name="mms_url" class="form-control" id="mms_url">
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div style="vertical-align: middle;line-height: 80px;color: green">OR</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mms" class="control-label">MMS File
+                                            <a href="#" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-content="Allowed file types: jpg,jpeg,png,gif<br>Max file size: 10 MB" data-original-title="Limits">
+                                                <i class="entypo-attention"></i>
+                                            </a>
+                                        </label>
+                                        <input id="mms" type="file" name="mms" accept='.jpeg,.png,.jpg,.gif'>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="row">
                             <div class="col-md-12">
@@ -429,6 +451,7 @@
                     data:{id:sid},
                     success: function(result){
                         edit.find('#text').val(result['text']);
+                        $('#mms_url').val(result['mms']);
                         if(result['repeat'] == -2) {
                             edit.find('#schedule_repeat').val('Never');
                             edit.find('.repeat_after').css('display','none');

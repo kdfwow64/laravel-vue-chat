@@ -195,6 +195,7 @@ class MessagesController extends Controller
                 $newSchedule->sender = $sender->did;
                 $newSchedule->receiver = $receiver;
         //        $newSchedule->mms = $mms;
+                $newSchedule->mms = $mms['mms'];
                 $newSchedule->repeat = $request->input('repeat_times1',"");
                 $newSchedule->frequency = $request->input('frequency_type1',"");
                 $newSchedule->start_date = '2018-06-07';
@@ -330,6 +331,7 @@ class MessagesController extends Controller
             $mms = [];
         }
 
+
         /**
          * @var $group Group
          */
@@ -376,7 +378,7 @@ class MessagesController extends Controller
                     $newSchedule->account_id = 1;
                     $newSchedule->sender = $sender->did;
                     $newSchedule->receiver = $contact->phone;
-            //        $newSchedule->mms = $mms;
+                    $newSchedule->mms = $mms['mms'];
                     $newSchedule->repeat = $request->input('repeat_times1',"");
                     $newSchedule->frequency = $request->input('frequency_type1',"");
                     $newSchedule->start_date = '2018-06-07';
@@ -533,7 +535,18 @@ class MessagesController extends Controller
         $year_weekend_day = $request->input('yearly_day1');
 
         $text = $request->input('text');
-
+        if ($request->hasFile('mms') ) {
+            
+            $mms = [
+                'mms' => url('storage/' . request()
+                        ->file('mms')
+                        ->storePublicly("accounts/{$request->user()->account_id}/mms", 'public')),
+            ];
+        } elseif ($request->has('mms_url') ) {
+            $mms = ['mms' => $request->input('mms_url')];
+        } else {
+            $mms = [];
+        }
         $schedule = Auth::user()->account->schedule()->where('id',$id)->get(['*']);
         $uContact = Auth::user()->account->searchContact($schedule[0]['receiver']);
         $text = str_replace(":first_name", $uContact->first_name, $text);
@@ -554,6 +567,7 @@ class MessagesController extends Controller
             'doy' => $doy,
             'year_weekend_turn' => $year_weekend_turn,
             'year_weekend_day' => $year_weekend_day,
+            'mms' => $mms['mms'],
 
         ));
         return response()->json(['message' => 'Schedule successfully updated']);

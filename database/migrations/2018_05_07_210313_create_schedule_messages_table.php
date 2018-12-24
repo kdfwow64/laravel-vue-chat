@@ -38,7 +38,7 @@ class CreateScheduleMessagesTable extends Migration
             $table->string('text')->nullable();
             $table->integer('flag')->nullable();
             $table->integer('flagE')->nullable();
-            $table->integer('mms')->nullable();
+            $table->string('mms')->nullable();
             $table->integer('group_id')->nullable();
             $table->integer('conversation_id')->nullable();
             $table->foreign('account_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
